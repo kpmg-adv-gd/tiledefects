@@ -1,0 +1,181 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+    xmlns:unified="sap.ui.unified"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    controllerName="kpmg.custom.pod.GDPodCustom.GDPodCustom.controller.popup.OpenDefectPopup"
+    width="100%"
+    height="100%"
+>
+    <Dialog id="viewDefectDialog" title="Defect Details" showHeader="true" contentHeight="700px"  contentWidth="1500px" verticalScrolling="false" horizontalScrolling="false"> 
+        <content>
+        
+            <!-- Dialog per scaicare file -->
+            <Dialog id="uploadViewDialog" showHeader="true" class="uploadDialog" title="View defect's attachments" contentWidth="850px" contentHeight="450px">
+                <content>
+                    <VBox class="uploadDialogVBox">
+                        <Table items="{/defect/attachments}" class="uploadedTable" growing="true" growingScrollToLoad="true" inset="false" popinLayout="GridSmall">
+                            <columns>
+                                <Column width="75%" minScreenWidth="Tablet" demandPopin="true">
+                                    <Text text="File name"></Text>
+                                </Column>
+                                <Column width="25%" minScreenWidth="Tablet" demandPopin="true">
+                                    <Text text="Download"></Text>
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem>
+                                    <cells>
+                                        <Text text="{FILE_NAME}"></Text>
+                                        <Button icon="sap-icon://download" press="downloadAttachment"/>
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </VBox>
+                </content>
+                <beginButton>
+                    <Button text="Close" class="btnUploadStyled" press="closePopupAttachments"/>
+                </beginButton>
+            </Dialog>
+
+            <!-- Container principale -->
+            <VBox width="100%" height="100%" renderType="Bare" alignItems="Center" justifyContent="SpaceBetween">
+                <!-- Testata principale -->
+                <VBox renderType="Bare" width="90%" height="20%">
+                    <HBox width="100%" height="50%" renderType="Bare" justifyContent="SpaceAround">
+                        <HBox renderType="Bare" alignItems="Center" width="33%">
+                            <Label text="WBE" width="50%" class="markingHeaderLabel markingMediumLabelValue sapUiSmallMarginEnd"/>
+                            <Label text="{/wbe}" width="50%" class="markingMediumLabelValue"/>
+                        </HBox>
+                        <HBox renderType="Bare" alignItems="Center" width="33%">
+                            <Label text="SFC" width="50%" class="markingHeaderLabel markingMediumLabelValue sapUiSmallMarginEnd"/>
+                            <Label text="{/sfc}" width="50%" class="markingMediumLabelValue"/>
+                        </HBox>
+                        <HBox renderType="Bare" alignItems="Center" justifyContent="End" width="33%">
+                            <Label text="WORKCENTER" width="50%" class="markingHeaderLabel markingMediumLabelValue sapUiSmallMarginEnd"/>
+                            <Label text="{/wc}" width="50%" class="markingMediumLabelValue"/>
+                        </HBox>
+                    </HBox>
+                    <HBox width="100%" height="50%" renderType="Bare" justifyContent="SpaceBetween">
+                        <HBox renderType="Bare" alignItems="Center" width="25%">
+                            <Label text="Material" width="40%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
+                            <Label width="50%" text="{/defect/material}"  class="markingMediumLabelValue"/>
+                        </HBox>
+                        <HBox renderType="Bare" alignItems="Center" width="30%">
+                            <Label text="{/defect/typeOrder}" width="60%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
+                            <Label width="30%" text="{/defect/mes_order}"  class="markingMediumLabelValue" />
+                        </HBox>
+                        <HBox renderType="Bare" alignItems="Center" width="25%">
+                            <Label text="Assembly" width="40%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
+                            <Label width="50%" text="{/defect/assembly}"  class="markingMediumLabelValue" />
+                        </HBox>
+                        <HBox renderType="Bare" alignItems="Center" width="20%">
+                            <Label text="N° of Def." width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" />
+                            <Label width="20%" text="{/defect/numDefect}" class="markingMediumLabelValue"/>
+                        </HBox>
+                    </HBox>
+                </VBox>
+
+                <HBox width="90%" height="50%" renderType="Bare" justifyContent="SpaceBetween">
+                    <VBox width="30%" height="100%" renderType="Bare" justifyContent="SpaceBetween">
+                        <HBox width="100%" renderType="Bare" alignItems="Center">
+                            <Label text="Title" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" />
+                            <Label  width="50%" text="{/defect/title}" class="markingMediumLabelValue"/>
+                        </HBox>
+                        <HBox width="100%" renderType="Bare" alignItems="Center">
+                            <Label text="Description" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
+                            <TextArea width="50%" value="{/defect/description}" class="markingMediumLabelValue" editable="false"/>
+                        </HBox>
+                        <HBox width="100%" renderType="Bare" alignItems="Center">
+                            <Label text="Code Group" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" />
+                            <Label text="{/defect/groupDesc}" width="50%" class="markingMediumLabelValue"/>
+                        </HBox>
+                        <HBox width="100%" renderType="Bare" alignItems="Center">
+                            <Label text="Defect Type" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" />
+                            <Label text="{/defect/codeDesc}" width="50%" class="markingMediumLabelValue"/>
+                        </HBox>
+                        <HBox width="100%" renderType="Bare" alignItems="Center">
+                            <Label text="Priority" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" />
+                            <Label text="{/defect/priority_description}" width="50%" class="markingMediumLabelValue"/>
+                        </HBox>
+                        <HBox width="100%" renderType="Bare" alignItems="Center">
+                            <Label text="Variance" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" />
+                            <Label text="{/defect/varianceDesc}" width="50%" class="markingMediumLabelValue"/>
+                        </HBox>
+                        <HBox width="100%" renderType="Bare" alignItems="Center">
+                            <Label text="Attachment" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" />
+                            <Button text="View attachments" visible="{/defect/hasAttachment}" width="100%" press="onAttachmentPress" />
+                        </HBox>
+                    </VBox>
+                    <VBox width="30%" height="100%" renderType="Bare" justifyContent="SpaceBetween">
+                        <HBox width="100%" renderType="Bare" alignItems="Center">
+                            <Label text="Blocking" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"  />
+                            <CheckBox text="" width="50%" selected="{/defect/blocking}" enabled="false" class="markingMediumLabelValue"/>
+                        </HBox>
+                        <HBox width="100%" renderType="Bare" alignItems="Center" >
+                            <Label text="Notification Type" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" />
+                            <Label text="{/defect/notification_type_description}" width="50%" class="markingMediumLabelValue"/>
+                        </HBox>
+                        <HBox width="100%" renderType="Bare" alignItems="Center" >
+                            <Label text="Coding" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" />
+                            <Label text="{/defect/coding_description}" width="50%" class="markingMediumLabelValue"/>
+                        </HBox>
+                        <HBox width="100%" renderType="Bare" alignItems="Center" >
+                            <Label text="Replaced in Assembly" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" />
+                            <Label text="{/defect/replaced_in_assembly}" width="50%" class="markingMediumLabelValue"/>
+                        </HBox>
+                        <HBox width="100%" renderType="Bare" alignItems="Center" >
+                            <Label text="Defect Note" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
+                            <TextArea width="50%" value="{/defect/defect_note}" class="markingMediumLabelValue" editable="false"/>
+                        </HBox>
+                        <HBox width="100%" renderType="Bare" alignItems="Center" >
+                            <Label text="Responsible" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" />
+                            <Label text="{/defect/responsible}" width="50%" class="markingMediumLabelValue"/>
+                        </HBox> 
+                        <HBox width="100%" renderType="Bare" alignItems="Center" >
+                            <Label text="Opened By" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
+                            <Label width="50%" text="{/defect/user}" class="markingMediumLabelValue"/>
+                        </HBox>
+                    </VBox>
+                    <VBox width="30%" height="100%" renderType="Bare" justifyContent="SpaceBetween">
+                        <HBox width="100%" renderType="Bare" alignItems="Center" >
+                            <Label text="QN Code" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
+                            <Link width="50%" text="{/defect/qn_code}" href="{/defect/qn_link}" target="_blank"  class="markingMediumLabelValue" />
+                        </HBox>
+                        <HBox width="100%" renderType="Bare" alignItems="Center" >
+                            <Label text="Status" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
+                            <Label width="50%" text="{/defect/state}" class="markingMediumLabelValue"/>
+                        </HBox>
+                        <HBox width="100%" renderType="Bare" alignItems="Center" >
+                            <Label text="System Status" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
+                            <TextArea width="50%" value="{/defect/system_status_description}" class="markingMediumLabelValue" editable="false"/>
+                        </HBox>  
+                        <HBox width="100%" renderType="Bare" alignItems="Center" >
+                            <Label text="User Status" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
+                            <Label width="50%" text="{/defect/user_status}" class="markingMediumLabelValue"/>
+                        </HBox>
+                        <HBox width="100%" renderType="Bare" alignItems="Center" >
+                            <Label text="Approval User" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
+                            <Label width="50%" text="{/defect/approval_user}" class="markingMediumLabelValue"/>
+                        </HBox>
+                        <HBox width="100%" renderType="Bare" alignItems="Center">
+                            <Label text="Creation Date" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
+                            <Label width="50%" text="{path: '/defect/creation_date', formatter: '.formatDateTime'}" class="markingMediumLabelValue"/>
+                        </HBox>
+                        <HBox width="100%" renderType="Bare" alignItems="Center">
+                            <Label text="End Date" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
+                            <Label width="50%" text="{path: '/defect/modifiedDateTime', formatter: '.formatDateTime'}" visible="{= ${/defect/state} !== 'OPEN' }" class="markingMediumLabelValue"/>
+                        </HBox>
+                    </VBox>
+                </HBox>
+                
+                <HBox width="90%" height="10%"  renderType="Bare" alignItems="Center" justifyContent="End">
+                    <Button text="Cancel" type="Emphasized" press="onClosePopup" class="sapUiSmallMarginEnd" />
+                </HBox> 
+            </VBox>
+        </content>
+    </Dialog>
+</core:FragmentDefinition>

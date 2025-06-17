@@ -1,0 +1,15 @@
+{
+	"components": [
+		{
+			"id": "defectstile",
+			"type": "VIEW_PLUGIN",
+			"allowMultipleInstances": false,
+			"name": "kpmg.custom.plugin.defectstile.defectstile",
+			"propertyEditor": "kpmg.custom.plugin.defectstile.defectstile.builder.PropertyEditor",
+			"i18n": "kpmg.custom.plugin.defectstile.defectstile.i18n.i18n",
+            "productionProcessEnabled": true,
+           "productionProcessTitle": "defectstile",
+			"supportedPodTypes": ["WORK_CENTER","OPERATION","ORDER","OTHER"]
+		}   
+	]
+}

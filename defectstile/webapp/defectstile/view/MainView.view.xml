@@ -1,0 +1,348 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:t="sap.ui.table" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form" xmlns:core="sap.ui.core"
+ xmlns:html="http://www.w3.org/1999/xhtml" controllerName="kpmg.custom.plugin.defectstile.defectstile.controller.MainView" width="100%" height="100%">
+    <Panel 
+        id="panelPlugin"  
+        width="100%"
+        height="100%"
+        expandable="false"
+        expanded="false"
+        accessibleRole="Region"
+        backgroundDesign="Transparent"
+        class="sapUiNoContentPadding">  
+        <content>
+            <!-- Nuovo IconTabBar per le sezioni -->
+            <IconTabBar id="mainTabBar" class="sapUiResponsiveContentPadding" expanded="true" upperCase="false" select="changeTabSection">
+                <!-- Prima sezione: Approvazione QN -->
+                <items>
+                    <IconTabFilter
+                        text="{i18n>defects.section.defects}"
+                        key="approveQN"
+                        icon="sap-icon://validate">
+                        <VBox width="100%" height="100%" renderType="Bare">
+                            <!--Filtri prima riga-->
+                            <HBox width="100%" height="12%" class="headerContainer" renderType="Bare">
+                                <VBox width="14.25%" height="100%" renderType="Bare" class="filterBox" >
+                                    <Label text="{i18n>defects.label.wbe}:" width="100%" textAlign="Left" vAlign="Middle" class="kpmgGDSmallLabel paddingLeft" />
+                                    <Input id="wbeInputId" placeholder="Enter WBE" showSuggestion="true" showValueHelp="false" suggestionItems="{FilterModel>/WBEs}"  class="GDInputField">
+                                        <suggestionItems>
+                                            <core:Item key="{FilterModel>WBE}" text="{FilterModel>WBE}" />
+                                        </suggestionItems>
+                                    </Input>                                   
+                                </VBox>
+                                <VBox width="14.25%" height="100%" renderType="Bare" class="filterBox" >
+                                    <Label text="{i18n>defects.label.sfc}:" width="100%" textAlign="Left" vAlign="Middle" class="kpmgGDSmallLabel paddingLeft" />
+                                    <Input id="sfcInputId" placeholder="Enter SFC" showSuggestion="true" showValueHelp="false" suggestionItems="{FilterModel>/SFCs}"  class="GDInputField">
+                                        <suggestionItems>
+                                            <core:Item key="{FilterModel>SFC}" text="{FilterModel>SFC}" />
+                                        </suggestionItems>
+                                    </Input>     
+                                </VBox>
+                                <VBox width="14.25%" height="100%" renderType="Bare" class="filterBox" >
+                                    <Label text="{i18n>defects.label.order}:" width="100%" textAlign="Left" vAlign="Middle" class="kpmgGDSmallLabel paddingLeft" />
+                                    <Input id="orderInputId" placeholder="Enter Prod.Ord/Pur.Doc." showSuggestion="true" showValueHelp="false" suggestionItems="{FilterModel>/ORDERs}"  class="GDInputField">
+                                        <suggestionItems>
+                                            <core:Item key="{FilterModel>ORDER}" text="{FilterModel>ORDER}" />
+                                        </suggestionItems>
+                                    </Input>                
+                                </VBox>
+                                <VBox width="14.25%" height="100%" renderType="Bare" class="filterBox" >
+                                    <Label text="{i18n>defects.label.wc}:" width="100%" textAlign="Left" vAlign="Middle" class="kpmgGDSmallLabel paddingLeft" />
+                                    <Input id="wcInputId" placeholder="Enter Workcenter" showSuggestion="true" showValueHelp="false" suggestionItems="{FilterModel>/WORKCENTERs}"  class="GDInputField">
+                                        <suggestionItems>
+                                            <core:Item key="{FilterModel>WORKCENTER}" text="{FilterModel>WORKCENTER}" />
+                                        </suggestionItems>
+                                    </Input>    
+                                </VBox>
+                                <VBox width="14.25%" height="100%" renderType="Bare" class="filterBox" >
+                                    <Label text="{i18n>defects.label.codeGroup}:" width="100%" textAlign="Left" vAlign="Middle" class="kpmgGDSmallLabel paddingLeft" />
+                                    <Input id="codeGroupInputId" placeholder="Enter Code Group" showSuggestion="true" showValueHelp="false" suggestionItems="{FilterModel>/CODEGROUPs}"  class="GDInputField">
+                                        <suggestionItems>
+                                            <core:Item text="{FilterModel>CODEGROUP}" />
+                                        </suggestionItems>
+                                    </Input>   
+                                </VBox>
+                                <VBox width="14.25%" height="100%" renderType="Bare" class="filterBox">
+                                    <Label text="{i18n>defects.label.defectType}:" width="100%" textAlign="Left" vAlign="Middle" class="kpmgGDSmallLabel paddingLeft" />
+                                    <Input id="defectTypeInputId" placeholder="Enter Defect Type" showSuggestion="true" showValueHelp="false" suggestionItems="{FilterModel>/DEFECTTYPEs}"  class="GDInputField">
+                                        <suggestionItems>
+                                            <core:Item text="{FilterModel>DEFECTTYPE}" />
+                                        </suggestionItems>
+                                    </Input>  
+                                </VBox>
+                                <VBox width="14.25%" height="100%" renderType="Bare" class="lastFilterBox" >
+                                    <Label text="" width="100%" textAlign="Left" vAlign="Middle" class="kpmgGDSmallLabel paddingLeft" />
+                                    <HBox width="100%" renderType="Bare" class="buttonsFilterBox" >
+                                        <Button text="{i18n>defects.button.search}" icon="sap-icon://search" type="Emphasized" class="searchButton" press="onGoPress" />
+                                        <Button text="{i18n>defects.button.clearFilter}" icon="sap-icon://clear-all" type="Default" class="clearButton" press="onClearPress" />
+                                    </HBox>
+                                </VBox>
+                            </HBox> 
+                            <!-- Tabella difetti -->
+                            <VBox width="100%" height="78%" renderType="Bare">
+                                <t:Table id="defectTable" busy="{DefectModel>/BusyLoadingDefectTable}"  rowSelectionChange="rowSelectionChange"  class="kpmgGDTable" 
+                                    rows="{DefectModel>/filtered}" selectionMode="Single" selectionBehavior="RowOnly" visibleRowCountMode="Auto" rowHeight="45px">
+                                <t:layoutData>
+                                    <FlexItemData growFactor="1" baseSize="0%"/>
+                                </t:layoutData>
+                                    <t:columns> 
+                                        <t:Column sortProperty="wbe" filterProperty="wbe" width="8.75%">
+                                            <Label text="{i18n>defects.table.WBE}"  />
+                                            <t:template>
+                                                <Text wrapping="false" text="{DefectModel>wbe}"  />
+                                            </t:template>
+                                        </t:Column>
+                                        <t:Column sortProperty="sfc" filterProperty="sfc" width="8.75%">
+                                            <Label wrapping="false" text="{i18n>defects.table.sfc}"  />
+                                            <t:template>
+                                                <Text wrapping="false" text="{DefectModel>sfc}"  />
+                                            </t:template>
+                                        </t:Column>
+                                        <t:Column sortProperty="operation" filterProperty="operation" width="8.75%">
+                                            <Label wrapping="false" text="{i18n>defects.table.operation}"  />
+                                            <t:template>
+                                                <Text wrapping="false" text="{DefectModel>operation}"  />
+                                            </t:template>
+                                        </t:Column>
+                                        <t:Column sortProperty="mes_order" filterProperty="mes_order" width="8.75%">
+                                            <Label wrapping="false" text="{i18n>defects.table.order}"  />
+                                            <t:template>
+                                                <Text wrapping="false" text="{DefectModel>mes_order}"  />
+                                            </t:template>
+                                        </t:Column>
+                                        <t:Column sortProperty="assembly" filterProperty="assembly" width="8.75%">
+                                            <Label text="{i18n>defects.table.assembly}"  />
+                                            <t:template>
+                                                <Text wrapping="false" text="{DefectModel>assembly}"  />
+                                            </t:template>
+                                        </t:Column>
+                                        <t:Column sortProperty="groupDesc" filterProperty="groupDesc" width="8.75%">
+                                            <Label text="{i18n>defects.table.group}"  />
+                                            <t:template>
+                                                <Text wrapping="false" text="{DefectModel>groupDesc}"  />
+                                            </t:template>
+                                        </t:Column>
+                                        <t:Column sortProperty="codeDesc" filterProperty="codeDesc" width="8.75%">
+                                            <Label text="{i18n>defects.table.defectType}"  />
+                                            <t:template>
+                                                <Text wrapping="false" text="{DefectModel>codeDesc}"  />
+                                            </t:template>
+                                        </t:Column>
+                                        <t:Column sortProperty="coding_description" filterProperty="coding_description" width="8.75%">
+                                            <Label text="{i18n>defects.table.coding}"  />
+                                            <t:template>
+                                                <Text wrapping="false" text="{DefectModel>coding_description}"  />
+                                            </t:template>
+                                        </t:Column>
+                                        <t:Column sortProperty="title" filterProperty="title" width="8.75%">
+                                            <Label text="{i18n>defects.table.title}"  />
+                                            <t:template>
+                                                <Text wrapping="false" text="{DefectModel>title}"  />
+                                            </t:template>
+                                        </t:Column>
+                                        <t:Column sortProperty="priority_description" filterProperty="priority_description" width="8.75%">
+                                            <Label text="{i18n>defects.table.priority}"  />
+                                            <t:template>
+                                                <Text wrapping="false" text="{DefectModel>priority_description}"  />
+                                            </t:template>
+                                        </t:Column>
+                                        <t:Column sortProperty="user" filterProperty="user" width="8.75%">
+                                            <Label text="{i18n>defects.table.user}"  />
+                                            <t:template>
+                                                <Text wrapping="false" text="{DefectModel>user}"  />
+                                            </t:template>
+                                        </t:Column> 
+                                        <t:Column width="4%" hAlign="Center">
+                                            <Label text="{i18n>defects.table.detail}"  />
+                                            <t:template>
+                                                <core:Icon src="sap-icon://hint" color="#d70a32" press="onDetailsPress" />
+                                            </t:template>
+                                        </t:Column>                               
+                                    </t:columns>
+                                </t:Table>
+                            </VBox>
+                            <!-- Bottoni in basso a destra per confermare o cancellare QN -->
+                            <HBox width="30%" height="10%" class="buttonContainer" renderType="Bare">
+                                <VBox width="50%" height="100%" renderType="Bare" class="buttonBox">
+                                    <Button id="confirmButton" text="{i18n>defects.button.approveQN}" icon="sap-icon://accept" type="Emphasized" class="confirmButton" press="onApproveQN"/>
+                                </VBox>
+                                <VBox width="50%" height="100%" renderType="Bare" class="buttonBox">
+                                    <Button id="cancelButton" text="{i18n>defects.button.cancelQN}" icon="sap-icon://decline" type="Reject" class="cancelButton" press="onCancelQN"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                    </IconTabFilter>
+                    <!-- Seconda sezione: Report -->
+                    <IconTabFilter
+                        text="{i18n>defects.section.reportDefects}"
+                        key="reportDefect"
+                        icon="sap-icon://quality-issue">
+                        <VBox width="100%" height="100%" renderType="Bare">
+                            <!-- Filtri seconda tabella -->
+                            <HBox width="100%" height="12%" class="headerContainer" renderType="Bare">
+                                <VBox width="11.1%" height="100%" renderType="Bare" class="filterBox">
+                                    <Label text="{i18n>defects.label.wbe}:" width="100%" textAlign="Left" vAlign="Middle" class="kpmgGDSmallLabel paddingLeft" />
+                                    <Input id="reportWbeInputId" placeholder="Enter WBE" showSuggestion="true" showValueHelp="false" suggestionItems="{FilterModel>/WBEs}" class="GDInputField">
+                                        <suggestionItems>
+                                            <core:Item key="{FilterModel>WBE}" text="{FilterModel>WBE}" />
+                                        </suggestionItems>
+                                    </Input>
+                                </VBox>
+                                <VBox width="11.1%" height="100%" renderType="Bare" class="filterBox">
+                                    <Label text="{i18n>defects.label.sfc}:" width="100%" textAlign="Left" vAlign="Middle" class="kpmgGDSmallLabel paddingLeft" />
+                                    <Input id="reportSfcInputId" placeholder="Enter SFC" showSuggestion="true" showValueHelp="false" suggestionItems="{FilterModel>/SFCs}" class="GDInputField">
+                                        <suggestionItems>
+                                            <core:Item key="{FilterModel>SFC}" text="{FilterModel>SFC}" />
+                                        </suggestionItems>
+                                    </Input>
+                                </VBox>
+                                <VBox width="11.1%" height="100%" renderType="Bare" class="filterBox">
+                                    <Label text="{i18n>defects.label.order}:" width="100%" textAlign="Left" vAlign="Middle" class="kpmgGDSmallLabel paddingLeft" />
+                                    <Input id="reportOrderInputId" placeholder="Enter Order" showSuggestion="true" showValueHelp="false" suggestionItems="{FilterModel>/ORDERs}" class="GDInputField">
+                                        <suggestionItems>
+                                            <core:Item key="{FilterModel>ORDER}" text="{FilterModel>ORDER}" />
+                                        </suggestionItems>
+                                    </Input>
+                                </VBox>
+                                <VBox width="11.1%" height="100%" renderType="Bare" class="filterBox">
+                                    <Label text="{i18n>defects.label.QN}:" width="100%" textAlign="Left" vAlign="Middle" class="kpmgGDSmallLabel paddingLeft" />
+                                    <Input id="reportQnInputId" placeholder="Enter QN" showSuggestion="true" showValueHelp="false" suggestionItems="{FilterModel>/QNs}" class="GDInputField">
+                                        <suggestionItems>
+                                            <core:Item key="{FilterModel>QN}" text="{FilterModel>QN}" />
+                                        </suggestionItems>
+                                    </Input>
+                                </VBox>
+                                <VBox width="11.1%" height="100%" renderType="Bare" class="filterBox">
+                                    <Label text="{i18n>defects.label.priority}:" width="100%" textAlign="Left" vAlign="Middle" class="kpmgGDSmallLabel paddingLeft" />
+                                    <Input id="reportPriorityInputId" placeholder="Enter Priority" showSuggestion="true" showValueHelp="false" suggestionItems="{FilterModel>/PRIORITYs}" class="GDInputField">
+                                        <suggestionItems>
+                                            <core:Item key="{FilterModel>PRIORITY}" text="{FilterModel>PRIORITY}" />
+                                        </suggestionItems>
+                                    </Input>
+                                </VBox>
+                                <VBox width="11.1%" height="100%" renderType="Bare" class="filterBox">
+                                    <Label text="{i18n>defects.label.status}:" width="100%" textAlign="Left" vAlign="Middle" class="kpmgGDSmallLabel paddingLeft" />
+                                    <Input id="reportStatusInputId" placeholder="Enter Status" showSuggestion="true" showValueHelp="false" suggestionItems="{FilterModel>/STATUSs}" class="GDInputField">
+                                        <suggestionItems>
+                                            <core:Item key="{FilterModel>STATUS}" text="{FilterModel>STATUS}" />
+                                        </suggestionItems>
+                                    </Input>
+                                </VBox>
+                                <VBox width="11.1%" height="100%" renderType="Bare" class="filterBox">
+                                    <Label text="{i18n>defects.label.crDate}:" width="100%" textAlign="Left" vAlign="Middle" class="kpmgGDSmallLabel paddingLeft" />
+                                    <DateTimePicker id="reportCrDateInputId" placeholder="Select CR Date" class="GDInputField" valueFormat="yyyy-MM-dd HH:mm:ss" />
+                                </VBox>
+                                <VBox width="11.1%" height="100%" renderType="Bare" class="lastFilterBox">
+                                    <Label text="{i18n>defects.label.endDate}:" width="100%" textAlign="Left" vAlign="Middle" class="kpmgGDSmallLabel paddingLeft" />
+                                    <DateTimePicker id="reportEndDateInputId" placeholder="Select End Date" class="GDInputField" valueFormat="yyyy-MM-dd HH:mm:ss" />
+                                </VBox>
+                                <VBox width="11.1%" height="100%" renderType="Bare" class="lastFilterBox" >
+                                    <Label text="" width="100%" textAlign="Left" vAlign="Middle" class="kpmgGDSmallLabel paddingLeft" />
+                                    <HBox width="100%" renderType="Bare" class="buttonsFilterBox" >
+                                        <Button text="{i18n>defects.button.search}" icon="sap-icon://search" type="Emphasized" class="searchButton" press="onReportGoPress" />
+                                        <Button text="{i18n>defects.button.clearFilter}" icon="sap-icon://clear-all" type="Default" class="clearButton" press="onReportClearPress" />
+                                    </HBox>
+                                    <Button text="{i18n>defects.button.download}" icon="sap-icon://download" type="Emphasized" class="downloadButton" press="onExcelPress" />
+                                </VBox>
+                            </HBox>
+                            <!-- Tabella seconda sezione -->
+                            <VBox width="100%" height="88%" renderType="Bare">
+                                <t:Table id="reportTableId" busy="{DefectModel>/BusyLoadingReportTable}" class="kpmgGDTable"  width="100%"
+                                        rows="{DefectModel>/filteredReport}" selectionMode="Single" selectionBehavior="RowOnly" visibleRowCountMode="Auto" rowHeight="45px">
+                                    <t:layoutData>
+                                       <FlexItemData growFactor="1" baseSize="0%"/>
+                                    </t:layoutData>
+                                    <t:columns>
+                                            <t:Column width="8%" sortProperty="wbe" filterProperty="wbe">
+                                                <Label text="{i18n>defects.table.WBE}"/>
+                                                <t:template>
+                                                    <Text text="{DefectModel>wbe}" />
+                                                </t:template>
+                                            </t:Column>
+                                            <t:Column width="8%" sortProperty="sfc" filterProperty="sfc">
+                                                <Label text="{i18n>defects.table.sfc}"/>
+                                                <t:template>
+                                                    <Text text="{DefectModel>sfc}" />
+                                                </t:template>
+                                            </t:Column>
+                                            <t:Column width="8%" sortProperty="mes_order" filterProperty="mes_order">
+                                                <Label text="{i18n>defects.table.order}"/>
+                                                <t:template>
+                                                    <Text text="{DefectModel>mes_order}" />
+                                                </t:template>
+                                            </t:Column>
+                                            <t:Column width="8%" sortProperty="material" filterProperty="material">
+                                                <Label text="{i18n>defects.table.material}"/>
+                                                <t:template>
+                                                    <Text text="{DefectModel>material}" />
+                                                </t:template>
+                                            </t:Column>
+                                            <t:Column width="8%" sortProperty="assembly" filterProperty="assembly">
+                                                <Label text="{i18n>defects.table.assembly}"/>
+                                                <t:template>
+                                                    <Text text="{DefectModel>assembly}" />
+                                                </t:template>
+                                            </t:Column>
+                                            <t:Column width="8%" sortProperty="qn_code" filterProperty="qn_code">
+                                                <Label text="{i18n>defects.table.QN}"/>
+                                                <t:template>
+                                                    <Text text="{DefectModel>qn_code}" />
+                                                </t:template>
+                                            </t:Column>
+                                            <t:Column width="8%" sortProperty="groupDesc" filterProperty="groupDesc">
+                                                <Label text="{i18n>defects.table.codeGroup}"/>
+                                                <t:template>
+                                                    <Text text="{DefectModel>groupDesc}" />
+                                                </t:template>
+                                            </t:Column>
+                                            <t:Column width="8%" sortProperty="codeDesc" filterProperty="codeDesc">
+                                                <Label text="{i18n>defects.table.defectType}"/>
+                                                <t:template>
+                                                    <Text text="{DefectModel>codeDesc}" />
+                                                </t:template>
+                                            </t:Column>
+                                            <t:Column width="8%" sortProperty="title" filterProperty="title">
+                                                <Label text="{i18n>defects.table.title}"/>
+                                                <t:template>
+                                                    <Text text="{DefectModel>title}" />
+                                                </t:template>
+                                            </t:Column>
+                                            <t:Column width="8%" sortProperty="priority_description" filterProperty="priority_description">
+                                                <Label text="{i18n>defects.table.priority}"/>
+                                                <t:template>
+                                                    <Text text="{DefectModel>priority_description}" />
+                                                </t:template>
+                                            </t:Column>
+                                            <t:Column width="7%" sortProperty="status" filterProperty="status">
+                                                <Label text="{i18n>defects.table.status}"/>
+                                                <t:template>
+                                                    <Text text="{DefectModel>status}" />
+                                                </t:template>
+                                            </t:Column>
+                                            <t:Column width="10%" sortProperty="creation_date" filterProperty="creation_date">
+                                                <Label text="{i18n>defects.table.creationDate}"/>
+                                                <t:template>
+                                                    <Text text="{path: 'DefectModel>creation_date', formatter: '.formatDateTime'}" />
+                                                </t:template>
+                                            </t:Column>
+                                            <t:Column width="5%" hAlign="Center">
+                                                <Label text="{i18n>defects.table.details}"/>
+                                                <t:template>
+                                                    <core:Icon src="sap-icon://hint" color="#d70a32" press="onDetailsPress" />
+                                                </t:template>
+                                            </t:Column>
+                                            <t:Column width="5%" hAlign="Center">
+                                                <Label text="{i18n>defects.table.close}"/>
+                                                <t:template>
+                                                    <Button text="{i18n>defects.button.close}" visible="{DefectModel>okClose}" type="Reject" class="closeButton" press="onReportClosePress" />
+                                                </t:template>
+                                            </t:Column>
+                                    </t:columns>
+                                </t:Table>
+                            </VBox>
+                        </VBox>
+                    </IconTabFilter>
+                </items>
+            </IconTabBar>
+        </content>
+    </Panel>		
+</mvc:View>
