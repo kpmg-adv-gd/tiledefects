@@ -318,7 +318,7 @@
 }
 .sapMITBContent {
     border-bottom: .0625rem solid #818286;
-    height: 90%;
+    height: 100%;
 }
 .sapMITBContainerContent {
     margin-top: 0;
@@ -331,7 +331,7 @@
 }
 .sapMITH {
     z-index: 1;
-    height: 12%;
+    height: auto;
 }
 .sapMITBTab {
     width: 8rem;
@@ -353,7 +353,10 @@
     width: 8rem;
 }
 .sapFDynamicPage-Std-Desktop-XL .sapUiResponsiveContentPadding .sapMITBContent {
-    padding: 1rem !important;
+    padding-top: 1rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    padding-bottom: 0rem !important;
 }
 .sapFDynamicPage-Std-Tablet .sapUiResponsiveContentPadding .sapMITBContent, .sapFDynamicPage-Std-Desktop .sapUiResponsiveContentPadding .sapMITBContent {
     padding: 1rem 0.5rem !important;
@@ -362,4 +365,8 @@
 .buttonExcel {
     font-size: 2rem;
     padding-top: 1rem;
+}
+
+.sapMITH .sapMITBHead {
+    padding-top: 0.15rem;
 }

@@ -12,15 +12,15 @@
         <content>
             <!-- Nuovo IconTabBar per le sezioni -->
             <IconTabBar id="mainTabBar" class="sapUiResponsiveContentPadding" expanded="true" upperCase="false" select="changeTabSection">
-                <!-- Prima sezione: Approvazione QN -->
                 <items>
+                    <!-- Prima sezione: Approvazione QN -->
                     <IconTabFilter
                         text="{i18n>defects.section.defects}"
                         key="approveQN"
                         icon="sap-icon://validate">
                         <VBox width="100%" height="100%" renderType="Bare">
                             <!--Filtri prima riga-->
-                            <HBox width="100%" height="12%" class="headerContainer" renderType="Bare">
+                            <HBox width="100%" height="auto" class="headerContainer" renderType="Bare">
                                 <VBox width="14.25%" height="100%" renderType="Bare" class="filterBox" >
                                     <Label text="{i18n>defects.label.wbe}:" width="100%" textAlign="Left" vAlign="Middle" class="kpmgGDSmallLabel paddingLeft" />
                                     <Input id="wbeInputId" placeholder="Enter WBE" showSuggestion="true" showValueHelp="false" suggestionItems="{FilterModel>/WBEs}"  class="GDInputField">
@@ -78,7 +78,7 @@
                                 </VBox>
                             </HBox> 
                             <!-- Tabella difetti -->
-                            <VBox width="100%" height="78%" renderType="Bare">
+                            <VBox width="100%" height="76%" renderType="Bare">
                                 <t:Table id="defectTable" busy="{DefectModel>/BusyLoadingDefectTable}"  rowSelectionChange="rowSelectionChange"  class="kpmgGDTable" 
                                     rows="{DefectModel>/filtered}" selectionMode="Single" selectionBehavior="RowOnly" visibleRowCountMode="Auto" rowHeight="45px">
                                 <t:layoutData>
@@ -161,7 +161,7 @@
                                 </t:Table>
                             </VBox>
                             <!-- Bottoni in basso a destra per confermare o cancellare QN -->
-                            <HBox width="30%" height="10%" class="buttonContainer" renderType="Bare">
+                            <HBox width="30%" height="8%" class="buttonContainer" renderType="Bare">
                                 <VBox width="50%" height="100%" renderType="Bare" class="buttonBox">
                                     <Button id="confirmButton" text="{i18n>defects.button.approveQN}" icon="sap-icon://accept" type="Emphasized" class="confirmButton" press="onApproveQN"/>
                                 </VBox>
@@ -178,7 +178,7 @@
                         icon="sap-icon://quality-issue">
                         <VBox width="100%" height="100%" renderType="Bare">
                             <!-- Filtri seconda tabella -->
-                            <HBox width="100%" height="12%" class="headerContainer" renderType="Bare">
+                            <HBox width="100%" height="auto" class="headerContainer" renderType="Bare">
                                 <VBox width="11.1%" height="100%" renderType="Bare" class="filterBox">
                                     <Label text="{i18n>defects.label.wbe}:" width="100%" textAlign="Left" vAlign="Middle" class="kpmgGDSmallLabel paddingLeft" />
                                     <Input id="reportWbeInputId" placeholder="Enter WBE" showSuggestion="true" showValueHelp="false" suggestionItems="{FilterModel>/WBEs}" class="GDInputField">
@@ -245,7 +245,7 @@
                                 </VBox>
                             </HBox>
                             <!-- Tabella seconda sezione -->
-                            <VBox width="100%" height="88%" renderType="Bare">
+                            <VBox width="100%" height="84%" renderType="Bare">
                                 <t:Table id="reportTableId" busy="{DefectModel>/BusyLoadingReportTable}" class="kpmgGDTable"  width="100%"
                                         rows="{DefectModel>/filteredReport}" selectionMode="Single" selectionBehavior="RowOnly" visibleRowCountMode="Auto" rowHeight="45px">
                                     <t:layoutData>

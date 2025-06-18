@@ -241,7 +241,6 @@ sap.ui.define([
                         item.code = defStd.code;
                         item.material = defStd.material.material;
                         item.numDefect = defStd.quantity;
-                        item.status = defStd.state;
                         item.varianceDesc = that.oVarianceModel.getProperty("/").filter(variance => variance.cause == item.variance)[0].description;
                         item.group = that.oGroupModel.getProperty("/").filter(group => group.codes.filter(code => code.code == item.code).length > 0)[0].group;
                         item.groupDesc = that.oGroupModel.getProperty("/").filter(group => group.codes.filter(code => code.code == item.code).length > 0)[0].description;
