@@ -15,6 +15,7 @@ sap.ui.define([
         oGroupModel: new JSONModel(),
         ViewDefectPopup: new ViewDefectPopup(),
         oVarianceModel: new JSONModel(),
+        tabSelection: null,
 
         onInit: function () {
 			BaseController.prototype.onInit.apply(this, arguments);				           
@@ -26,7 +27,12 @@ sap.ui.define([
             this.oFilterModel.setSizeLimit(10000);
             this.getView().setModel(this.oFilterModel,"FilterModel");
 
+            this.oDefectModel.setProperty("/", []); 
             this.oDefectModelStandard.setProperty("/", []); 
+            this.tabSelection = "approveQN"; 
+
+            sap.ui.getCore().getEventBus().subscribe("defect", "reloadReportDefect", this.onReportGoPress, this);
+            sap.ui.getCore().getEventBus().subscribe("defect", "cancelModify", this.cancelModify, this);
 
 		},
 
@@ -47,9 +53,11 @@ sap.ui.define([
             if (sSelectedKey == "approveQN") {
                 that.getDefectsToApprove();
                 that.onReportClearPress();
+                that.tabSelection = "approveQN"; 
             }else{
                 that.onClearPress();
                 that.setFilters();
+                that.tabSelection = "reportDefect"; 
             }
         },
 
@@ -163,11 +171,7 @@ sap.ui.define([
             var successCallback = function(response) {
                 that.oDefectModel.setProperty("/", response);
                 that.oDefectModel.setProperty("/filtered", response);
-                var sfcs = [];
-                response.forEach(item => {
-                    sfcs.push(item.sfc);
-                });
-                if (sfcs.length > 0) that.getWBE(sfcs, "/filtered");
+                var orders = [];
                 response.forEach(item => {
                     that.getDefectStandard(item.sfc, "/filtered");
                 });
@@ -185,40 +189,8 @@ sap.ui.define([
             CommonCallManager.callProxy("POST", url, params, true, successCallback, errorCallback, that);
         },
 
-        // Chiamata per ottenere il WBE in base agli SFC
-        getWBE: function (sfcs, model) {
-            var that=this;
-            let plant = that.getInfoModel().getProperty("/plant");
-            let BaseProxyURL = that.getInfoModel().getProperty("/BaseProxyURL");
-            let pathAPIFilter = "/api/getWBEBySFCs";
-            let url = BaseProxyURL+pathAPIFilter;
-
-            let params = {
-                "plant": plant,
-                "sfcs": sfcs
-            }
-            // Callback di successo
-            var successCallback = function(response) {
-                response.data.value.forEach(custom => {
-                    that.oDefectModel.getProperty("/")
-                        .filter(item => item.sfc == custom.MFG_ORDER)
-                        .forEach(item => item.wbe = custom.DATA_FIELD_VALUE);
-                    that.oDefectModel.getProperty(model)
-                        .filter(item => item.sfc == custom.MFG_ORDER)
-                        .forEach(item => item.wbe = custom.DATA_FIELD_VALUE);
-                });
-				that.oDefectModel.refresh();
-            };
-
-            // Callback di errore
-            var errorCallback = function(error) {
-                console.log("Chiamata POST fallita:", error);
-            };
-            CommonCallManager.callProxy("POST", url, params, true, successCallback, errorCallback, that);
-        },
-
         // Chiamata per ottenere lo standard dei difetti
-        getDefectStandard: function(sfc, model , filters) {
+        getDefectStandard: function(sfc, model) {
             var that=this;
             let plant = that.getInfoModel().getProperty("/plant");
 
@@ -238,24 +210,20 @@ sap.ui.define([
                     if (defStd.length > 0) {
                         defStd = defStd[0];
                         item.wc = defStd.workCenter;
-                        item.code = defStd.code;
-                        item.material = defStd.material.material;
                         item.numDefect = defStd.quantity;
+                        item.status = defStd.state;
                         item.varianceDesc = that.oVarianceModel.getProperty("/").filter(variance => variance.cause == item.variance)[0].description;
-                        item.group = that.oGroupModel.getProperty("/").filter(group => group.codes.filter(code => code.code == item.code).length > 0)[0].group;
-                        item.groupDesc = that.oGroupModel.getProperty("/").filter(group => group.codes.filter(code => code.code == item.code).length > 0)[0].description;
+                        item.groupDesc = that.oGroupModel.getProperty("/").filter(group => group.group == item.group)[0].description;
                         item.codeDesc = that.oGroupModel.getProperty("/").filter(group => group.group == item.group)[0].associateCodes.filter(code => code.code == item.code)[0].description;
                         item.okClose = (!item.create_qn || (item.system_status != null && item.system_status.includes("ATCO"))) && item.status == "OPEN";
+                        item.hasAttachment = defStd.fileIds && defStd.fileIds.length > 0;
+                        if (item.hasAttachment) {
+                            item.files = defStd.fileIds;
+                        }
                     }
                 });
-                // Eventuale filtro sullo stato
-                if (!filters || filters.status == "") {
-                    that.oDefectModel.setProperty("/", defects);
-                    that.oDefectModel.setProperty(model, defects);
-                }else{
-                    that.oDefectModel.setProperty("/", defects.filter(def => !def.status || def.status == filters.status));
-                    that.oDefectModel.setProperty(model, defects.filter(def => !def.status || def.status == filters.status));
-                }
+                that.oDefectModel.setProperty("/", defects);
+                that.oDefectModel.setProperty(model, defects);
                 that.oDefectModel.refresh();
                 that.setFilters();
                 sap.ui.core.BusyIndicator.hide();
@@ -341,8 +309,54 @@ sap.ui.define([
         onDetailsPress: function (oEvent) {
             var that = this;
             let defect = oEvent.getSource().getParent().getBindingContext("DefectModel").getObject();
+            let path = oEvent.getSource().getParent().getBindingContext("DefectModel").getPath();
+            that.oDefectModel.setProperty("/backupRowDefect", {
+                defect: {
+                    title: defect.title,
+                    description: defect.description,
+                    priority: defect.priority,
+                    priority_description: defect.priority_description,
+                    variance: defect.variance,
+                    varianceDesc: defect.varianceDesc,
+                    create_qn: defect.create_qn,
+                    blocking: defect.blocking,
+                    notification_type: defect.notification_type,
+                    notification_type_description: defect.notification_type_description,
+                    coding: defect.coding,
+                    coding_description: defect.coding_description,
+                    replaced_in_assembly: defect.replaced_in_assembly,
+                    modelRadioReplaced: defect.modelRadioReplaced,
+                    defect_note: defect.defect_note,
+                    responsible: defect.responsible,
+                },
+                path: path
+            });
             that.ViewDefectPopup.open(that.getView(), that, 
-                defect, that.oDefectModelStandard.getProperty("/").filter(def => def.id == defect.id)[0]);
+                defect, that.oDefectModelStandard.getProperty("/").filter(def => def.id == defect.id)[0], 
+                that.tabSelection);
+        },
+
+        cancelModify: function () {
+            var that = this;
+            var backup = that.oDefectModel.getProperty("/backupRowDefect");
+            var defect = that.oDefectModel.getProperty(backup.path);
+            defect.title = backup.defect.title;
+            defect.description = backup.defect.description;
+            defect.priority = backup.defect.priority;
+            defect.priority_description = backup.defect.priority_description;
+            defect.variance = backup.defect.variance;
+            defect.varianceDesc = backup.defect.varianceDesc;
+            defect.create_qn = backup.defect.create_qn;
+            defect.blocking = backup.defect.blocking;
+            defect.notification_type = backup.defect.notification_type;
+            defect.notification_type_description = backup.defect.notification_type_description;
+            defect.coding = backup.defect.coding;
+            defect.coding_description = backup.defect.coding_description;
+            defect.replaced_in_assembly = backup.defect.replaced_in_assembly;
+            defect.modelRadioReplaced = backup.defect.modelRadioReplaced;
+            defect.defect_note = backup.defect.defect_note;
+            defect.responsible = backup.defect.responsible;
+            that.oDefectModel.refresh();
         },
 
         // Cancellazione del QN
@@ -386,35 +400,131 @@ sap.ui.define([
                 return;
             }
 
-            var that = this;
 			var defect = that.getInfoModel().getProperty("/selectedDefect");
+            let plant = that.getInfoModel().getProperty("/plant");
             let idDefect = defect.id;
+            var wbeSplit = defect.wbe.split(".");
+            var wbs = "";
+            for (var i=0; i < wbeSplit.length - 1; i++) {
+                if (wbs == "") {
+                    wbs = wbeSplit[i];
+                }else{
+                    wbs = wbs + "." + wbeSplit[i];
+                }
+            }
 
             let dataForSap = {
-                // Lista dei parametri da passare a SAP
-            };
+                "notiftype": defect.notification_type,
+                "shortText": defect.title,
+                "priority": "" + defect.priority,
+                "codeGroup": defect.coding_group,
+                "code" : defect.coding,
+                "materialPlant": "GD01",  // Todo: da cambiare con il mapping sviluppato da Andrea
+                "material" : defect.material,
+                "poNumber" : defect.type_order == "Prod. Order" ? "" : defect.mes_order,
+                "prodOrder" : defect.type_order == "Prod. Order" ? defect.mes_order : "",
+                "descript" : defect.defect_note,
+                "dCodegrp" : defect.group,
+                "dCode" : defect.code,
+                "assembly" : defect.assembly,
+                "quantDefects" : "" + defect.numDefect,
+                "partner" : defect.responsible,
+                "textline" : defect.description,
+                "wbeAssembly" : defect.wbe.replaceAll(" ", ""),         
+                "zqmGrund" : defect.variance,
+                "zqmInit" : defect.replaced_in_assembly ? "YES" : "NO",
+                "pspNr" : wbs.replaceAll(" ", ""),
+                "zqmNplnr" : "",
+                "zqmEqtyp" : "",
+                "attach" : []                                      
+            }
 
             let params = {
+                dataForSap: dataForSap,
                 defectId: idDefect,
                 userId: that.getInfoModel().getProperty("/user_id"),
-                dataForSap: defect
+                plant: plant,
             };
+
+            var files = defect.files;
+            if (files) {
+                that.downloadFile(dataForSap, files, 0, idDefect);
+            }else{
+                that.sendApproveQNToSAP(params)
+            }      
+
+        },
+
+        sendApproveQNToSAP: function (params) {
+            var that = this;
 
             let BaseProxyURL = that.getInfoModel().getProperty("/BaseProxyURL");
             let pathOrderBomApi = "/db/approveDefectQN";
             let url = BaseProxyURL+pathOrderBomApi; 
-
+            
             // Callback di successo
             var successCallback = function(response) {
                 that.getDefectsToApprove();
-                that.showToast(that.getI18n("defects.save.success.message"));
+                that.showToast(that.getI18n("defects.save.success.message"));    
             };
             // Callback di errore
             var errorCallback = function(error) {
                 console.log("Chiamata POST fallita:", error);
             };
-            CommonCallManager.callProxy("POST", url, params, true, successCallback, errorCallback, that);
+            CommonCallManager.callProxy("POST", url, params, true, successCallback, errorCallback, that, true, true);
 
+        },
+
+        downloadFile: function (dataForSap, files, i,  idDefect) {
+            var that = this;
+            let plant = that.getInfoModel().getProperty("/plant");
+
+            if (files.length == i) {
+                let params = {
+                    dataForSap: dataForSap,
+                    defectId: idDefect,
+                    userId: that.getInfoModel().getProperty("/user_id"),
+                    plant: plant
+                };
+                that.sendApproveQNToSAP(params);
+                return;
+            }
+
+            let params = {
+                fileId: files[i]
+            };
+
+            var infoModel = that.getInfoModel();
+            let BaseProxyURL = infoModel.getProperty("/BaseProxyURL");
+            let pathOrderBomApi = "/api/nonconformance/v1/file/download";
+            let url = BaseProxyURL+pathOrderBomApi; 
+
+            // Callback di successo
+            var successCallback = function(response) {
+                if (response.fileContent && response.contentType) {
+                    dataForSap.attach.push({
+                        "name": response.fileName,
+                        "content": that.byteArrayToBase64(new Uint8Array(response.fileContent.data))
+                    })
+                }
+                that.downloadFile(dataForSap, files, i+1, idDefect);
+            };
+            // Callback di errore
+            var errorCallback = function(error) {
+                console.log("Chiamata GET fallita:", error);
+            };
+            CommonCallManager.callProxy("POST", url, params, true, successCallback, errorCallback, that);
+        },
+
+        byteArrayToBase64: function(byteArray) {
+            // 1. Converti l'array di byte in una stringa binaria
+            let binary = '';
+            for (let i = 0; i < byteArray.length; i++) {
+              binary += String.fromCharCode(byteArray[i]);
+            }
+          
+            // 2. Codifica in base64 usando btoa
+            return btoa(binary);
         },
 
         // Seconda sezione - report difetti
@@ -431,11 +541,7 @@ sap.ui.define([
                 return;
             }
 
-            if (wbe != "") {
-                that.getSFCbyWBE(wbe);
-            }else{
-                that.getSFCbyFilter([]);
-            }
+            that.getSFCbyFilter();
             
         },
 
@@ -458,36 +564,8 @@ sap.ui.define([
 			}
         },
 
-        // Chiamata per ottenere gli SFC in base al WBE
-        getSFCbyWBE: function (wbe) {
-            var that=this;
-            let plant = that.getInfoModel().getProperty("/plant");
-            let BaseProxyURL = that.getInfoModel().getProperty("/BaseProxyURL");
-            let pathAPIFilter = "/api/getSFCbyWBE";
-            let url = BaseProxyURL+pathAPIFilter;
-
-            let params = {
-                "plant": plant,
-                "wbe": wbe
-            }
-            // Callback di successo
-            var successCallback = function(response) {
-                var sfcs = [];
-                response.data.value.forEach(item => sfcs.push(item.MFG_ORDER));
-                if (sfcs.length > 0) {
-                    that.getSFCbyFilter(sfcs)
-                }
-            };
-
-            // Callback di errore
-            var errorCallback = function(error) {
-                console.log("Chiamata POST fallita:", error);
-            };
-            CommonCallManager.callProxy("POST", url, params, true, successCallback, errorCallback, that);
-        },  
-
         // Chiamata per ottenere gli SFC in base ai filtri
-        getSFCbyFilter: function (sfcsForWBE) {
+        getSFCbyFilter: function () {
             var that=this;
             let BaseProxyURL = that.getInfoModel().getProperty("/BaseProxyURL");
             let pathAPIFilter = "/db/selectDefectForReport";
@@ -500,30 +578,26 @@ sap.ui.define([
             var order = that.byId("reportOrderInputId").getValue();
             var qnCode = that.byId("reportQnInputId").getValue();
             var priority = that.byId("reportPriorityInputId").getValue();
+            var status = that.byId("reportStatusInputId").getValue();
+            var wbe = that.byId("wbeInputId").getValue();
 
             let params = {
                 "plant": plant,
-                "sfcsForWBE": sfcsForWBE,
+                "wbe": wbe,
                 "sfc": sfc,
                 "order": order,
                 "qnCode": qnCode,
                 "priority": priority,
                 "startDate": creationDate,
                 "endDate": endDate,
+                "status": status
             }
             // Callback di successo
             var successCallback = function(response) {
                 that.oDefectModel.setProperty("/", response);
                 that.oDefectModel.setProperty("/filteredReport", response);
-                var sfcs = [];
                 response.forEach(item => {
-                    sfcs.push(item.sfc);
-                });
-                if (sfcs.length > 0) that.getWBE(sfcs, "/filteredReport");
-                response.forEach(item => {
-                    that.getDefectStandard(item.sfc, "/filteredReport", {
-                        status: that.byId("reportStatusInputId").getValue(),
-                    });
+                    that.getDefectStandard(item.sfc, "/filteredReport");
                 });
             };
 
@@ -540,14 +614,16 @@ sap.ui.define([
         // Chiusura del difetto
         onReportClosePress: function (oEvent) {
             var that = this;
-            let idDefect = oEvent.getSource().getParent().getBindingContext("DefectModel").getObject().id;
-            let qnCode = oEvent.getSource().getParent().getBindingContext("DefectModel").getObject().qn_code;
+            let defect = oEvent.getSource().getParent().getBindingContext("DefectModel").getObject();
             var plant = that.getInfoModel().getProperty("/plant");
 
             let params = {
-                id: idDefect,
+                id: defect.id,
                 plant: plant,
-                comments: ""
+                comments: "",
+                sfc: defect.sfc,
+                order: defect.mes_order,
+                qnCode: defect.qn_code == "" ? null : defect.qn_code
             };
 
             let BaseProxyURL = that.getInfoModel().getProperty("/BaseProxyURL");
@@ -556,41 +632,15 @@ sap.ui.define([
 
             // Callback di successo            defect, this.defectsStandard.getProperty("/").filter(def => def.id == defect.id)[0]            defect, this.defectsStandard.getProperty("/").filter(def => def.id == defect.id)[0]
             var successCallback = function(response) {
-               // that.sendCloseToSap(plant, idDefect, qnCode);
                 that.onReportGoPress();
                 that.showToast(that.getI18n("defect.close.success.message"));
             };
             // Callback di errore
             var errorCallback = function(error) {
+                that.showErrorMessageBox(that.getI18n("defect.error.closeDefect"));
                 console.log("Chiamata POST fallita:", error);
             };
-            CommonCallManager.callProxy("POST", url, params, true, successCallback, errorCallback, that);
-        },
-
-        sendCloseToSap: function (plant, idDefect, qnCode) {
-            var that = this;
-
-            let params = {
-                plant: plant,
-                defectId: idDefect,
-                qnCode: qnCode
-            };
-
-            let BaseProxyURL = that.getInfoModel().getProperty("/BaseProxyURL");
-            let pathOrderBomApi = "/api/nonconformance/v1/sap/close";
-            let url = BaseProxyURL+pathOrderBomApi; 
-
-            // Callback di successo
-            var successCallback = function(response) {
-
-            };
-            // Callback di errore
-            var errorCallback = function(error) {
-                console.log("Chiamata POST fallita:", error);
-            };
-            
-            sap.ui.core.BusyIndicator.show(0);
-            CommonCallManager.callProxy("POST", url, params, true, successCallback, errorCallback, that);
+            CommonCallManager.callProxy("POST", url, params, true, successCallback, errorCallback, that, true, true);
         },
 
         onExcelPress: function () {
@@ -610,6 +660,7 @@ sap.ui.define([
                         "MATERIAL": element.material,
                         "ASSEMBLY": element.assembly,
                         "QUANTITY": element.numDefect,
+                        "CREATE QN": element.create_qn ? "YES" : "NO",
                         "QN CODE": element.qn_code,
                         "TITLE": element.title,
                         "DESCRIPTION": element.description,
@@ -617,10 +668,10 @@ sap.ui.define([
                         "DEFECT TYPE": element.codeDesc,
                         "PRIORITY": element.priority_description,
                         "VARIANCE": element.varianceDesc,
-                        "BLOCKING": element.blocking ? "SI" : "NO",
+                        "BLOCKING": element.blocking ? "YES" : "NO",
                         "NOTIFICATION TYPE": element.notification_type_description,
                         "CODING": element.coding_description,
-                        "REPLACED IN ASSEMBLY": element.replaced_in_assembly,
+                        "REPLACED IN ASSEMBLY": element.replaced_in_assembly? "YES" : "NO",
                         "DEFECT NOTE": element.defect_note,
                         "RESPONSIBLE": element.responsible,
                         "USER": element.user,
@@ -628,7 +679,7 @@ sap.ui.define([
                         "USER STATUS": element.user_status,
                         "APPROVAL USER": element.approval_user,
                         "STATUS": element.status,
-                        "CREATION DATE": element.creation_date,
+                        "CREATION DATE": that.formatDateTime(element.creation_date),
                         "END DATE": element.modifiedDateTime,
                     };
                     datasExcel.push(selected);
@@ -700,6 +751,11 @@ sap.ui.define([
               {
                 label: "QUANTITY",
                 property: "QUANTITY",
+                type: "string"
+              },
+              {
+                label: "CREATE QN",
+                property: "CREATE QN",
                 type: "string"
               },
               {
@@ -802,6 +858,24 @@ sap.ui.define([
                 property: "END DATE",
                 type: "string"
               }];
+        },
+
+        formatDateTime: function(date) {
+            var localeDate = new Date(date);
+            var hh = localeDate.getHours();
+            if (hh < 10) hh = '0' + hh;
+            var mm = localeDate.getMinutes();
+            if (mm < 10) mm = '0' + mm;
+            var ss = localeDate.getSeconds();
+            if (ss < 10) ss = '0' + ss;
+            var day = localeDate.getDate();
+            if (day < 10) day = '0' + day;
+            var month = localeDate.getMonth() + 1;
+            if (month < 10) month = '0' + month;
+            var year = localeDate.getFullYear();
+            if (year < 10) year = '0' + year;
+            // Formato ISO 8601: dd/mm/yyyy HH:mm:ss
+            return `${day}/${month}/${year} ${hh}:${mm}:${ss}`;
         },
 
 	});
