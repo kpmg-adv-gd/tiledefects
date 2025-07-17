@@ -171,22 +171,18 @@ sap.ui.define([
             var successCallback = function(response) {
                 that.oDefectModel.setProperty("/", response);
                 that.oDefectModel.setProperty("/filtered", response);
-                var orders = [];
                 response.forEach(item => {
                     that.getDefectStandard(item.sfc, "/filtered");
                 });
-                sap.ui.core.BusyIndicator.hide();
-                
             };
 
             // Callback di errore
             var errorCallback = function(error) {
                 console.log("Chiamata POST fallita:", error);
-                sap.ui.core.BusyIndicator.hide();
             };
 
             sap.ui.core.BusyIndicator.show(0);
-            CommonCallManager.callProxy("POST", url, params, true, successCallback, errorCallback, that);
+            CommonCallManager.callProxy("POST", url, params, true, successCallback, errorCallback, that, true, true);
         },
 
         // Chiamata per ottenere lo standard dei difetti
@@ -211,7 +207,6 @@ sap.ui.define([
                         defStd = defStd[0];
                         item.wc = defStd.workCenter;
                         item.numDefect = defStd.quantity;
-                        item.status = defStd.state;
                         item.varianceDesc = that.oVarianceModel.getProperty("/").filter(variance => variance.cause == item.variance)[0].description;
                         item.groupDesc = that.oGroupModel.getProperty("/").filter(group => group.group == item.group)[0].description;
                         item.codeDesc = that.oGroupModel.getProperty("/").filter(group => group.group == item.group)[0].associateCodes.filter(code => code.code == item.code)[0].description;
@@ -226,16 +221,13 @@ sap.ui.define([
                 that.oDefectModel.setProperty(model, defects);
                 that.oDefectModel.refresh();
                 that.setFilters();
-                sap.ui.core.BusyIndicator.hide();
             };
             // Callback di errore
             var errorCallback = function(error) {
                 console.log("Chiamata GET fallita:", error);
-                sap.ui.core.BusyIndicator.hide();
             };
             
-            sap.ui.core.BusyIndicator.show(0);
-            CommonCallManager.callProxy("GET", url, params, true, successCallback, errorCallback, that);
+            CommonCallManager.callProxy("GET", url, params, true, successCallback, errorCallback, that, true, true);
         },
 
         // Imposto i filtri in base ai dati presenti nella tabella
@@ -413,6 +405,15 @@ sap.ui.define([
                 }
             }
 
+            
+            var poNumber = "";
+            var prodOrder = "";
+            if (defect.type_order == "GRPF") {
+                poNumber = defect.mes_order;
+            } else if (defect.type_order != "ZMGF") {
+                prodOrder = defect.mes_order;
+            }
+
             let dataForSap = {
                 "notiftype": defect.notification_type,
                 "shortText": defect.title,
@@ -421,8 +422,8 @@ sap.ui.define([
                 "code" : defect.coding,
                 "materialPlant": "GD01",  // Todo: da cambiare con il mapping sviluppato da Andrea
                 "material" : defect.material,
-                "poNumber" : defect.type_order == "Prod. Order" ? "" : defect.mes_order,
-                "prodOrder" : defect.type_order == "Prod. Order" ? defect.mes_order : "",
+                "poNumber" : poNumber,
+                "prodOrder" : prodOrder,
                 "descript" : defect.defect_note,
                 "dCodegrp" : defect.group,
                 "dCode" : defect.code,
@@ -622,7 +623,7 @@ sap.ui.define([
                 plant: plant,
                 comments: "",
                 sfc: defect.sfc,
-                order: defect.mes_order,
+                order: defect.dm_order,
                 qnCode: defect.qn_code == "" ? null : defect.qn_code
             };
 

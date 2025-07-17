@@ -46,35 +46,35 @@
                 <!-- Testata principale -->
                 <VBox renderType="Bare" width="90%" height="20%">
                     <HBox width="100%" height="50%" renderType="Bare" justifyContent="SpaceAround">
-                        <HBox renderType="Bare" alignItems="Center" width="33%">
-                            <Label text="WBE" width="50%" class="markingHeaderLabel markingMediumLabelValue sapUiSmallMarginEnd"/>
-                            <Label text="{/wbe}" width="50%" class="markingMediumLabelValue"/>
+                        <HBox renderType="Bare" alignItems="Center" width="auto">
+                            <Label text="WBE" width="auto" class="markingHeaderLabel markingMediumLabelValue sapUiSmallMarginEnd"/>
+                            <Label text="{/wbe}" width="auto" class="markingMediumLabelValue"/>
                         </HBox>
-                        <HBox renderType="Bare" alignItems="Center" width="33%">
-                            <Label text="SFC" width="50%" class="markingHeaderLabel markingMediumLabelValue sapUiSmallMarginEnd"/>
-                            <Label text="{/sfc}" width="50%" class="markingMediumLabelValue"/>
+                        <HBox renderType="Bare" alignItems="Center" width="auto">
+                            <Label text="SFC" width="auto" class="markingHeaderLabel markingMediumLabelValue sapUiSmallMarginEnd"/>
+                            <Label text="{/sfc}" width="auto" class="markingMediumLabelValue"/>
                         </HBox>
-                        <HBox renderType="Bare" alignItems="Center" justifyContent="End" width="33%">
-                            <Label text="WORKCENTER" width="50%" class="markingHeaderLabel markingMediumLabelValue sapUiSmallMarginEnd"/>
-                            <Label text="{/wc}" width="50%" class="markingMediumLabelValue"/>
+                        <HBox renderType="Bare" alignItems="Center" justifyContent="End" width="auto">
+                            <Label text="WORKCENTER" width="auto" class="markingHeaderLabel markingMediumLabelValue sapUiSmallMarginEnd"/>
+                            <Label text="{/wc}" width="auto" class="markingMediumLabelValue"/>
                         </HBox>
                     </HBox>
                     <HBox width="100%" height="50%" renderType="Bare" justifyContent="SpaceBetween">
-                        <HBox renderType="Bare" alignItems="Center" width="25%">
-                            <Label text="Material" width="40%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
-                            <Label width="50%" text="{/defect/material}"  class="markingMediumLabelValue"/>
+                        <HBox renderType="Bare" alignItems="Center" width="auto">
+                            <Label text="Material" width="auto" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
+                            <Label width="auto" text="{/defect/material}"  class="markingMediumLabelValue"/>
                         </HBox>
-                        <HBox renderType="Bare" alignItems="Center" width="30%">
-                            <Label text="{/defect/type_order}" width="60%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
-                            <Label width="30%" text="{/defect/mes_order}"  class="markingMediumLabelValue" />
+                        <HBox renderType="Bare" alignItems="Center" width="auto">
+                            <Label text="{/defect/type_order}" width="auto" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
+                            <Label width="auto" text="{/defect/mes_order}"  class="markingMediumLabelValue" />
                         </HBox>
-                        <HBox renderType="Bare" alignItems="Center" width="25%">
-                            <Label text="Assembly" width="40%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
-                            <Label width="50%" text="{/defect/assembly}"  class="markingMediumLabelValue" />
+                        <HBox renderType="Bare" alignItems="Center" width="auto">
+                            <Label text="Assembly" width="auto" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
+                            <Label width="auto" text="{/defect/assembly}"  class="markingMediumLabelValue" />
                         </HBox>
-                        <HBox renderType="Bare" alignItems="Center" width="20%">
-                            <Label text="N° of Def." width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" />
-                            <Label width="20%" text="{/defect/numDefect}" class="markingMediumLabelValue"/>
+                        <HBox renderType="Bare" alignItems="Center" width="auto">
+                            <Label text="N° of Def." width="auto" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" />
+                            <Label width="auto" text="{/defect/numDefect}" class="markingMediumLabelValue"/>
                         </HBox>
                     </HBox>
                 </VBox>
@@ -173,7 +173,7 @@
                         </HBox>
                         <HBox width="100%" renderType="Bare" alignItems="Center" >
                             <Label text="Status" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
-                            <Label width="50%" text="{/defect/state}" class="markingMediumLabelValue"/>
+                            <Label width="50%" text="{/defect/status}" class="markingMediumLabelValue"/>
                         </HBox>
                         <HBox width="100%" renderType="Bare" alignItems="Center" >
                             <Label text="System Status" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
@@ -193,7 +193,7 @@
                         </HBox>
                         <HBox width="100%" renderType="Bare" alignItems="Center">
                             <Label text="End Date" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
-                            <Label width="50%" text="{path: '/defect/modifiedDateTime', formatter: '.formatDateTime'}" visible="{= ${/defect/state} !== 'OPEN' }" class="markingMediumLabelValue"/>
+                            <Label width="50%" text="{path: '/defect/modifiedDateTime', formatter: '.formatDateTime'}" visible="{= ${/defect/status} !== 'OPEN' }" class="markingMediumLabelValue"/>
                         </HBox>
                     </VBox>
                 </HBox>

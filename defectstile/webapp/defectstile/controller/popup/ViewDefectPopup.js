@@ -14,7 +14,7 @@ sap.ui.define([
             that.MainPODcontroller = oController;
             that.defectSelected = defect;
             that.defectSelected.modifiedDateTime = defectStandard.modifiedDateTime;
-            that.defectSelected.state = defectStandard.state;
+            //that.defectSelected.state = defectStandard.state;
             that.defectSelected.system_status_description = that.defectSelected.system_status_description == null ? "" : that.defectSelected.system_status_description.replaceAll(",", "\n");
             that.defectSelected.modelRadioReplaced = that.defectSelected.replaced_in_assembly ? 0 : 1;
 
