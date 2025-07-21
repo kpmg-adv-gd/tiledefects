@@ -28,6 +28,10 @@ sap.ui.define([
             that.ViewDefectModel.setProperty("/tabSelection", tabSelection);
             that.ViewDefectModel.setProperty("/modify", "off");
 
+            if (that.defectSelected.type_order == "GRPF") that.defectSelected.type_order = "Purch. Doc.";
+            else if (that.defectSelected.type_order == "ZMGF") that.defectSelected.type_order = "";
+            else that.defectSelected.type_order = "Prod. Order.";
+
             if (defect.qn_annullata != true && defect.qn_approvata != true) {
                 that.ViewDefectModel.setProperty("/notQN", "on");
             }else{
@@ -175,7 +179,7 @@ sap.ui.define([
                 var priorityScript = JSON.parse(that.ViewDefectModel.getProperty("/priorities").filter(item => item.priority == defect.priority)[0].costraints);
                 for (let chiave in priorityScript) {
                     for (let key in priorityScript[chiave]) {
-                        if (priorityScript[chiave][key] && defect[key] == "") {
+                        if ((priorityScript[chiave][key] == true && defect[key] == "") || (priorityScript[chiave][key].length > 0 && defect[key] != priorityScript[chiave][key])) {
                             that.MainPODcontroller.showErrorMessageBox("Error Priority to field " + key);
                             return false;
                         }
@@ -190,7 +194,7 @@ sap.ui.define([
                     var notificationTypeScript = JSON.parse(that.ViewDefectModel.getProperty("/notificationTypies").filter(item => item.notification_type == defect.notificationType)[0].costraints);
                     for (let chiave in notificationTypeScript) {
                         for (let key in notificationTypeScript[chiave]) {
-                            if (notificationTypeScript[chiave][key] && defect[key] == "") {
+                            if ((notificationTypeScript[chiave][key] == true && defect[key] == "") || (notificationTypeScript[chiave][key].length > 0 && defect[key] != notificationTypeScript[chiave][key])) {
                                 that.MainPODcontroller.showErrorMessageBox("Error Notification Type to field " + key);
                                 return false;
                             }
