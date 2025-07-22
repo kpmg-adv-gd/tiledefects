@@ -15,7 +15,7 @@ sap.ui.define([
             that.defectSelected = defect;
             that.defectSelected.modifiedDateTime = defectStandard.modifiedDateTime;
             //that.defectSelected.state = defectStandard.state;
-            that.defectSelected.system_status_description = that.defectSelected.system_status_description == null ? "" : that.defectSelected.system_status_description.replaceAll(",", "\n");
+            that.defectSelected.system_status = that.defectSelected.system_status == null ? "" : that.defectSelected.system_status.replaceAll(",", "\n");
             that.defectSelected.modelRadioReplaced = that.defectSelected.replaced_in_assembly ? 0 : 1;
 
             that._initDialog("kpmg.custom.plugin.defectstile.defectstile.view.popup.ViewDefectPopup", oView, that.ViewDefectModel);
@@ -169,7 +169,7 @@ sap.ui.define([
                     that.MainPODcontroller.showErrorMessageBox(that.MainPODcontroller.getI18n("defect.error.message"));
                     return false;
                 }
-            if (defect.create_qn && (defect.coding == "" || (defect.modelRadioReplaced != 0 && defect.modelRadioReplaced != 1) || defect.responsible == "")) {
+            if (defect.create_qn && (defect.coding == "" || defect.coding == null || defect.notification_type == "" || defect.notification_type == null || (defect.modelRadioReplaced != 0 && defect.modelRadioReplaced != 1) || defect.responsible == "" || defect.responsible == null)) {
                 that.MainPODcontroller.showErrorMessageBox(that.MainPODcontroller.getI18n("defect.error.message"));
                 return false;
             }

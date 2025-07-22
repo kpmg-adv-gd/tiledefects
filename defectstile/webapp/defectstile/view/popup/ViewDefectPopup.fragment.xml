@@ -142,7 +142,7 @@
                         </HBox>
                         <HBox width="100%" renderType="Bare" alignItems="Center" >
                             <Label text="Replaced in Assembly" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" />
-                            <Label text="{= ${/defect/replaced_in_assembly} === true ? 'YES' : 'NO' }" width="50%" class="markingMediumLabelValue" visible="{= ${/modify} === 'off' }"/>
+                            <Label text="{= ${/defect/replaced_in_assembly} === true ? 'YES' : ${/defect/replaced_in_assembly} === false ? 'NO' : '' }" width="50%" class="markingMediumLabelValue" visible="{= ${/modify} === 'off' }"/>
                             <RadioButtonGroup selectedIndex="{/defect/modelRadioReplaced}" width="50%" visible="{= ${/modify} === 'on' &amp;&amp; ${/defect/create_qn} === true }">
                                 <buttons>
                                     <RadioButton text="YES" groupName="group1" selected="{= ${/defect/replaced_in_assembly} === true }" />
@@ -156,9 +156,9 @@
                         </HBox>
                         <HBox width="100%" renderType="Bare" alignItems="Center" >
                             <Label text="Responsible" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" />
-                            <Label text="{/defect/responsible}" width="50%" class="markingMediumLabelValue" visible="{= ${/modify} === 'off' }"/>
+                            <Label text="{/defect/responsible_description}" width="50%" class="markingMediumLabelValue" visible="{= ${/modify} === 'off' }"/>
                             <Select selectedKey="{/defect/responsible}" width="50%" items="{/responsibles}" visible="{= ${/modify} === 'on' &amp;&amp; ${/defect/create_qn} === true }">
-                                <core:Item key="{id}" text="{id}" />
+                                <core:Item key="{id}" text="{description}" />
                             </Select>
                         </HBox> 
                         <HBox width="100%" renderType="Bare" alignItems="Center" >
@@ -177,7 +177,7 @@
                         </HBox>
                         <HBox width="100%" renderType="Bare" alignItems="Center" >
                             <Label text="System Status" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
-                            <TextArea width="50%" value="{/defect/system_status_description}" class="markingMediumLabelValue" editable="false"/>
+                            <TextArea width="50%" value="{/defect/system_status}" class="markingMediumLabelValue" editable="false"/>
                         </HBox>  
                         <HBox width="100%" renderType="Bare" alignItems="Center" >
                             <Label text="User Status" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
