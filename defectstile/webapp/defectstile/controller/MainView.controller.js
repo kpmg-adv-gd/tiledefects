@@ -57,8 +57,36 @@ sap.ui.define([
             }else{
                 that.onClearPress();
                 that.setFilters();
+                that.setFilterWBE();
                 that.tabSelection = "reportDefect"; 
             }
+        },
+
+        setFilterWBE: function () {
+            var that = this;
+            let plant = that.getInfoModel().getProperty("/plant");
+            
+            let BaseProxyURL = that.getInfoModel().getProperty("/BaseProxyURL");
+            let pathGetMarkingDataApi = "/db/getDefectsWBE";
+            let url = BaseProxyURL + pathGetMarkingDataApi;
+
+            let params = {
+                plant: plant
+            };
+
+            // Callback di successo
+            var successCallback = function (response) {
+                var wbeList = [];
+                response.forEach(item => {
+                    wbeList.push({WBE: item.wbe})
+                });
+                that.oFilterModel.setProperty("/WBEs", wbeList);
+            };
+            // Callback di errore
+            var errorCallback = function (error) {
+                console.log("Chiamata POST fallita: ", error);
+            };
+            CommonCallManager.callProxy("POST", url, params, true, successCallback, errorCallback, that);
         },
 
         // Recupero CodeGroups 

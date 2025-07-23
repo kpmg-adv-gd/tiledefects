@@ -151,12 +151,6 @@
                                                 <Text wrapping="false" text="{DefectModel>user}"  />
                                             </t:template>
                                         </t:Column> 
-                                        <t:Column sortProperty="user" filterProperty="user" width="8.75%">
-                                            <Label text="{i18n>defects.table.createQN}"  />
-                                            <t:template>
-                                                <core:Icon src="sap-icon://accept" color="#d70a32" visible="{DefectModel>create_qn}" />
-                                            </t:template>
-                                        </t:Column> 
                                         <t:Column width="4%" hAlign="Center">
                                             <Label text="{i18n>defects.table.detail}"  />
                                             <t:template>
@@ -324,6 +318,12 @@
                                                     <Text text="{DefectModel>status}" />
                                                 </t:template>
                                             </t:Column>
+                                            <t:Column width="5%" hAlign="Center">
+                                                <Label text="{i18n>defects.table.createQN}"  />
+                                                <t:template>
+                                                    <core:Icon src="sap-icon://accept" color="#d70a32" visible="{DefectModel>create_qn}" />
+                                                </t:template>
+                                            </t:Column> 
                                             <t:Column width="10%" sortProperty="creation_date" filterProperty="creation_date">
                                                 <Label text="{i18n>defects.table.creationDate}"/>
                                                 <t:template>
