@@ -611,9 +611,24 @@ sap.ui.define([
             sap.ui.core.BusyIndicator.show(0);
             CommonCallManager.callProxy("POST", url, params, true, successCallback, errorCallback, that);
         },
-        
+        onReportClosePress(oEvent) {
+            var that = this;
+            sap.m.MessageBox.show(
+                that.getI18n("defect.warning.closeDefect"), // Messaggio da visualizzare
+                {
+                    icon: sap.m.MessageBox.Icon.WARNING, // Tipo di icona
+                    title: that.getI18n("defect.titleWarning.closeDefect") || "Warning",         // Titolo della MessageBox
+                    actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL], 
+                    onClose: function(oAction) {          // Callback all'interazione
+                        if (oAction === "OK") {
+                            that.onCloseDefect(oEvent) // Chiama il callback con il contesto corretto
+                        }
+                    }
+                }
+            );
+        },
         // Chiusura del difetto
-        onReportClosePress: function (oEvent) {
+        onCloseDefect: function (oEvent) {
             var that = this;
             let defect = oEvent.getSource().getParent().getBindingContext("DefectModel").getObject();
             var plant = that.getInfoModel().getProperty("/plant");
