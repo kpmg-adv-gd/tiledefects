@@ -28,9 +28,9 @@ sap.ui.define([
             that.ViewDefectModel.setProperty("/tabSelection", tabSelection);
             that.ViewDefectModel.setProperty("/modify", "off");
 
-            if (that.defectSelected.type_order == "GRPF") that.defectSelected.type_order = "Purch. Doc.";
-            else if (that.defectSelected.type_order == "ZMGF") that.defectSelected.type_order = "";
-            else that.defectSelected.type_order = "Prod. Order.";
+            if (that.defectSelected.type_order == "GRPF") that.defectSelected.type_order_desc = "Purch. Doc.";
+            else if (that.defectSelected.type_order == "ZMGF") that.defectSelected.type_order_desc = "";
+            else that.defectSelected.type_order_desc = "Prod. Order.";
 
             if (defect.qn_annullata != true && defect.qn_approvata != true) {
                 that.ViewDefectModel.setProperty("/notQN", "on");

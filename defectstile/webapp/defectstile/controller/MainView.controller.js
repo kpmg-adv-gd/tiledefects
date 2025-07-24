@@ -448,7 +448,6 @@ sap.ui.define([
                 "priority": "" + defect.priority,
                 "codeGroup": defect.coding_group,
                 "code" : defect.coding,
-                "materialPlant": "GD01",  // Todo: da cambiare con il mapping sviluppato da Andrea
                 "material" : defect.material,
                 "poNumber" : poNumber,
                 "prodOrder" : prodOrder,
@@ -715,7 +714,7 @@ sap.ui.define([
                         "BLOCKING": element.blocking ? "YES" : "NO",
                         "NOTIFICATION TYPE": element.notification_type_description,
                         "CODING": element.coding_description,
-                        "REPLACED IN ASSEMBLY": defect.replaced_in_assembly ? "YES" : defect.replaced_in_assembly == false ? "NO" : "",
+                        "REPLACED IN ASSEMBLY": element.replaced_in_assembly ? "YES" : element.replaced_in_assembly == false ? "NO" : "",
                         "DEFECT NOTE": element.defect_note,
                         "RESPONSIBLE": element.responsible,
                         "USER": element.user,

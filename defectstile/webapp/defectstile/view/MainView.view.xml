@@ -282,6 +282,12 @@
                                                     <Text text="{DefectModel>assembly}" />
                                                 </t:template>
                                             </t:Column>
+                                            <t:Column width="5%" hAlign="Center">
+                                                <Label text="{i18n>defects.table.createQN}"  />
+                                                <t:template>
+                                                    <core:Icon src="sap-icon://accept" color="#d70a32" visible="{DefectModel>create_qn}" />
+                                                </t:template>
+                                            </t:Column> 
                                             <t:Column width="8%" sortProperty="qn_code" filterProperty="qn_code">
                                                 <Label text="{i18n>defects.table.QN}"/>
                                                 <t:template>
@@ -318,12 +324,6 @@
                                                     <Text text="{DefectModel>status}" />
                                                 </t:template>
                                             </t:Column>
-                                            <t:Column width="5%" hAlign="Center">
-                                                <Label text="{i18n>defects.table.createQN}"  />
-                                                <t:template>
-                                                    <core:Icon src="sap-icon://accept" color="#d70a32" visible="{DefectModel>create_qn}" />
-                                                </t:template>
-                                            </t:Column> 
                                             <t:Column width="10%" sortProperty="creation_date" filterProperty="creation_date">
                                                 <Label text="{i18n>defects.table.creationDate}"/>
                                                 <t:template>

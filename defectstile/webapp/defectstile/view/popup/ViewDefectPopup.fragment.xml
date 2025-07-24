@@ -65,7 +65,7 @@
                             <Label width="auto" text="{/defect/material}"  class="markingMediumLabelValue"/>
                         </HBox>
                         <HBox renderType="Bare" alignItems="Center" width="auto">
-                            <Label text="{/defect/type_order}" width="auto" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
+                            <Label text="{/defect/type_order_desc}" width="auto" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
                             <Label width="auto" text="{/defect/mes_order}"  class="markingMediumLabelValue" />
                         </HBox>
                         <HBox renderType="Bare" alignItems="Center" width="auto">
@@ -181,7 +181,7 @@
                         </HBox>  
                         <HBox width="100%" renderType="Bare" alignItems="Center" >
                             <Label text="User Status" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
-                            <Label width="50%" text="{/defect/user_status}" class="markingMediumLabelValue"/>
+                            <TextArea width="50%" value="{/defect/user_status}" class="markingMediumLabelValue" editable="false"/>
                         </HBox>
                         <HBox width="100%" renderType="Bare" alignItems="Center" >
                             <Label text="Approval User" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
