@@ -348,6 +348,11 @@ sap.ui.define([
                     modelRadioReplaced: defect.modelRadioReplaced,
                     defect_note: defect.defect_note,
                     responsible: defect.responsible,
+                    coding_id: defect.coding_id,
+                    coding: defect.coding,
+                    coding_group: defect.coding_group,
+                    coding_description: defect.coding_description,
+                    coding_group_description: defect.coding_group_description
                 },
                 path: path
             });
@@ -376,6 +381,11 @@ sap.ui.define([
             defect.modelRadioReplaced = backup.defect.modelRadioReplaced;
             defect.defect_note = backup.defect.defect_note;
             defect.responsible = backup.defect.responsible;
+            defect.coding_id = backup.coding_id;
+            defect.coding = backup.coding;
+            defect.coding_group = backup.coding_group;
+            defect.coding_description = backup.coding_description;
+            defect.coding_group_description = backup.coding_group_description;
             that.oDefectModel.refresh();
         },
 

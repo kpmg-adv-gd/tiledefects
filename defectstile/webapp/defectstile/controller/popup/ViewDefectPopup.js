@@ -17,6 +17,7 @@ sap.ui.define([
             //that.defectSelected.state = defectStandard.state;
             that.defectSelected.system_status = that.defectSelected.system_status == null ? "" : that.defectSelected.system_status.replaceAll(",", "\n");
             that.defectSelected.modelRadioReplaced = that.defectSelected.replaced_in_assembly ? 0 : 1;
+            that.codingIdBackup = that.defectSelected.coding_id;
 
             that._initDialog("kpmg.custom.plugin.defectstile.defectstile.view.popup.ViewDefectPopup", oView, that.ViewDefectModel);
 
@@ -399,6 +400,7 @@ sap.ui.define([
                 }
             })
             that.ViewDefectModel.setProperty("/codings", [...[{ coding_id: "", coding_description: "" }], ...codings]);
+            that.ViewDefectModel.setProperty("/defect/coding_id", that.codingIdBackup);
         },
         
         onCancelModify: function () {
