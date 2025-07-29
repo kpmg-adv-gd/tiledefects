@@ -282,7 +282,7 @@
                                                     <Text text="{DefectModel>assembly}" />
                                                 </t:template>
                                             </t:Column>
-                                            <t:Column width="5%" hAlign="Center">
+                                            <t:Column width="5%" hAlign="Center" sortProperty="create_qn" filterProperty="create_qn">
                                                 <Label text="{i18n>defects.table.createQN}"  />
                                                 <t:template>
                                                     <core:Icon src="sap-icon://accept" color="#d70a32" visible="{DefectModel>create_qn}" />

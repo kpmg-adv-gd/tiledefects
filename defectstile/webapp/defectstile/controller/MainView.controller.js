@@ -493,7 +493,7 @@ sap.ui.define([
             // Callback di successo
             var successCallback = function(response) {
                 that.getDefectsToApprove();
-                that.showToast(that.getI18n("defects.save.success.message"));    
+                sap.m.MessageBox.show(that.getI18n("defects.save.success.message"));    
             };
             // Callback di errore
             var errorCallback = function(error) {

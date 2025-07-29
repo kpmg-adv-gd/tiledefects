@@ -156,6 +156,7 @@ sap.ui.define([
 
         onPressModify: function () {
             var that = this;
+            that.onChangeCodingModify();      
             that.ViewDefectModel.setProperty("/modify", "on");
         },
 
@@ -169,7 +170,7 @@ sap.ui.define([
                     that.MainPODcontroller.showErrorMessageBox(that.MainPODcontroller.getI18n("defect.error.message"));
                     return false;
                 }
-            if (defect.create_qn && (defect.coding == "" || defect.coding == null || defect.notification_type == "" || defect.notification_type == null || (defect.modelRadioReplaced != 0 && defect.modelRadioReplaced != 1) || defect.responsible == "" || defect.responsible == null)) {
+            if (defect.create_qn && (defect.coding_id == "" || defect.coding_id == null || defect.notification_type == "" || defect.notification_type == null || (defect.modelRadioReplaced != 0 && defect.modelRadioReplaced != 1) || defect.responsible == "" || defect.responsible == null)) {
                 that.MainPODcontroller.showErrorMessageBox(that.MainPODcontroller.getI18n("defect.error.message"));
                 return false;
             }
@@ -225,7 +226,7 @@ sap.ui.define([
                 create_qn: defect.create_qn,
                 blocking : defect.blocking,
                 notificationType: defect.notification_type,
-                coding: defect.coding,
+                coding: defect.coding_id,
                 replaceInAssembly: defect.modelRadioReplaced == 0,
                 defectNote: defect.defect_note,
                 responsible: defect.responsible,
@@ -295,16 +296,30 @@ sap.ui.define([
         getCoding: function () {
             var that = this;
             var infoModel = that.MainPODcontroller.getInfoModel();
+            var plant = infoModel.getProperty("/plant");
 
             let BaseProxyURL = infoModel.getProperty("/BaseProxyURL");
             let pathReasonForVarianceApi = "/db/getZCodingData";
             let url = BaseProxyURL + pathReasonForVarianceApi;
 
-            let params = {};
+            let params = {
+                plant: plant
+            };
 
             // Callback di successo
             var successCallback = function (response) {
-                this.ViewDefectModel.setProperty("/codings", [...[{coding: "", coding_description: ""}], ...response]);
+                var codingGroups = [];
+                response.forEach(item => {
+                    if (codingGroups.filter(c => c.coding_group == item.coding_group).length == 0) {
+                        codingGroups.push({
+                            coding_group: item.coding_group,
+                            coding_group_description: item.coding_group_description
+                        });
+                    }
+                })
+                this.ViewDefectModel.setProperty("/responseCoding", response);
+                this.ViewDefectModel.setProperty("/codingGroups", [...[{ coding_group: "", coding_group_description: "" }], ...codingGroups]);
+                this.ViewDefectModel.setProperty("/codings", [...[{ coding_id: "", coding_description: "" }], ...[]]);
             };
 
             // Callback di errore
@@ -354,6 +369,36 @@ sap.ui.define([
                 console.log("Chiamata POST fallita: ", error);
             };
             CommonCallManager.callProxy("POST", url, params, true, successCallback, errorCallback, that);
+        },
+
+        onChangeCoding: function () {
+            var that = this;
+            var coding_group = that.ViewDefectModel.getProperty("/defect/coding_group");
+            var codings = [];
+            this.ViewDefectModel.getProperty("/responseCoding").forEach(item => {
+                if (item.coding_group == coding_group) {
+                    codings.push({
+                        coding_id: item.id,
+                        coding_description: item.coding_description
+                    });
+                }
+            })
+            that.ViewDefectModel.setProperty("/codings", [...[{ coding_id: "", coding_description: "" }], ...codings]);
+            that.ViewDefectModel.setProperty("/defect/coding_id", "");
+        },
+        onChangeCodingModify: function () {
+            var that = this;
+            var coding_group = that.ViewDefectModel.getProperty("/defect/coding_group");
+            var codings = [];
+            this.ViewDefectModel.getProperty("/responseCoding").forEach(item => {
+                if (item.coding_group == coding_group) {
+                    codings.push({
+                        coding_id: item.id,
+                        coding_description: item.coding_description
+                    });
+                }
+            })
+            that.ViewDefectModel.setProperty("/codings", [...[{ coding_id: "", coding_description: "" }], ...codings]);
         },
         
         onCancelModify: function () {
