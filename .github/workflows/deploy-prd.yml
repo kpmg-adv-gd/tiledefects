@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: 🧪 Installa dipendenze e lancia i test
-        working-directory: ./tiledefects  # ⬅️ sostituisci con la cartella giusta
+        working-directory: ./defectstile  # ⬅️ sostituisci con la cartella giusta
         run: |
           echo "📦 Installo dipendenze..."
           npm install
