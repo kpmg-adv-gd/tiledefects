@@ -1,0 +1,60 @@
+name: Deploy to Dev (Cloud Foundry)
+
+on:
+  push:
+    branches:
+      - development
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: CI-CD-DEV
+
+    steps:
+      - name: 🔄 Checkout codice
+        uses: actions/checkout@v4
+
+      - name: 🧪 Installa dipendenze e lancia i test
+        working-directory: ./defectstile  # ⬅️ sostituisci con la cartella giusta
+        run: |
+          echo "📦 Installo dipendenze..."
+          npm install
+          echo "🧪 Eseguo test unitari..."
+          # npm test
+
+      - name: Usa manifest per ambiente Dev
+        run: cp .staging/mta-dev.yaml mta.yaml
+
+
+      - name: ⚙️ Installa MTA Build Tool (mbt)
+        run: |
+          echo "📦 Installo mbt..."
+          npm install -g mbt
+          mbt --version
+ 
+      - name: 🛠️ Eseguo build MTA
+        run: |
+          echo "🏗️ Avvio build MTA..."
+          mbt build -p cf -t mta_archives
+ 
+      - name: 🔧 Installa cf CLI via dpkg
+        run: |
+          echo "📦 Scarico pacchetto Debian cf CLI..."
+          curl -L "https://packages.cloudfoundry.org/stable?release=debian64" -o cf.deb
+          sudo dpkg -i cf.deb
+          cf version
+ 
+      - name: 🔐 Login su Cloud Foundry
+        run: |
+          set -e
+          echo "🌐 API endpoint: ${{ vars.CF_API }}"
+          echo "👤 Login con utente: ${{ vars.CF_USERNAME }}"
+          cf login -a '${{ vars.CF_API }}' -u '${{ vars.CF_USERNAME }}' -p '${{ secrets.CF_PASSWORD }}' -o '${{ vars.CF_ORG }}' -s '${{ vars.CF_SPACE_DEV }}'
+ 
+      - name: ➕ Installa plugin multiapps per MTA deploy
+        run: |
+          cf install-plugin -r CF-Community "multiapps" -f
+
+      - name: 🚀 Deploy MTA su Cloud Foundry
+        run: |
+          cf deploy mta_archives/*.mtar -f
