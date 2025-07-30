@@ -381,11 +381,11 @@ sap.ui.define([
             defect.modelRadioReplaced = backup.defect.modelRadioReplaced;
             defect.defect_note = backup.defect.defect_note;
             defect.responsible = backup.defect.responsible;
-            defect.coding_id = backup.coding_id;
-            defect.coding = backup.coding;
-            defect.coding_group = backup.coding_group;
-            defect.coding_description = backup.coding_description;
-            defect.coding_group_description = backup.coding_group_description;
+            defect.coding_id = backup.defect.coding_id;
+            defect.coding = backup.defect.coding;
+            defect.coding_group = backup.defect.coding_group;
+            defect.coding_description = backup.defect.coding_description;
+            defect.coding_group_description = backup.defect.coding_group_description;
             that.oDefectModel.refresh();
         },
 
@@ -507,7 +507,7 @@ sap.ui.define([
             };
             // Callback di errore
             var errorCallback = function(error) {
-                console.log("Chiamata POST fallita:", error);
+                that.showErrorMessageBox(error);
             };
             CommonCallManager.callProxy("POST", url, params, true, successCallback, errorCallback, that, true, true);
 
@@ -690,7 +690,7 @@ sap.ui.define([
             };
             // Callback di errore
             var errorCallback = function(error) {
-                that.showErrorMessageBox(that.getI18n("defect.error.closeDefect"));
+                that.showErrorMessageBox(error);
                 console.log("Chiamata POST fallita:", error);
             };
             CommonCallManager.callProxy("POST", url, params, true, successCallback, errorCallback, that, true, true);
