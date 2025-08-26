@@ -13,7 +13,7 @@ modules:
     httpHeaders:
        - X-Frame-Options: deny
     CORS: "[{\"uriPattern\": \"^/defectstile/(.*)$\",\"allowedOrigin\": [
-           {\"host\": \"sap-dmc-test-96ypknc8.execution.eu20-quality.web.dmc.cloud.sap\",\"protocol\": \"https\"}],
+           {\"host\": \"sap-dmc-prod-gm0mzuut.execution.eu20-prod.web.dmc.cloud.sap\",\"protocol\": \"https\"}],
            \"allowedMethods\": [\"GET\",\"OPTIONS\",\"PUT\",\"OPTIONS\",\"DELETE\"],
            \"allowedHeaders\":[\"Origin\", \"Accept\",\"X-Requested-With\",\"Content-Type\",
            \"Access-Control-Request-Method\",\"Access-Control-Request-Headers\",\"Authorization\",
