@@ -46,6 +46,10 @@ sap.ui.define([
                 });
             }
 
+            that.ViewDefectModel.setProperty("/responsiblesVis2", false);
+            that.ViewDefectModel.setProperty("/responsiblesVis3", false);
+            that.ViewDefectModel.setProperty("/responsiblesVis4", false);
+
             that.getPriority();
             that.getCoding();
             that.getNotificationType();
@@ -161,6 +165,7 @@ sap.ui.define([
             that.ViewDefectModel.setProperty("/modify", "on");
         },
 
+
         validate: function () {
             var that = this;
             var defect = that.ViewDefectModel.getProperty("/defect");
@@ -171,7 +176,27 @@ sap.ui.define([
                     that.MainPODcontroller.showErrorMessageBox(that.MainPODcontroller.getI18n("defect.error.message"));
                     return false;
                 }
-            if (defect.create_qn && (defect.coding_id == "" || defect.coding_id == null || defect.notification_type == "" || defect.notification_type == null || (defect.modelRadioReplaced != 0 && defect.modelRadioReplaced != 1) || defect.responsible == "" || defect.responsible == null)) {
+            if (defect.create_qn && (defect.coding_id == "" || defect.coding_id == null || defect.notification_type == "" || defect.notification_type == null || (defect.modelRadioReplaced != 0 && defect.modelRadioReplaced != 1))) {
+                that.MainPODcontroller.showErrorMessageBox(that.MainPODcontroller.getI18n("defect.error.message"));
+                return false;
+            }
+
+            // Logica per il recupero del Responsible
+            var level = 4;
+            defect.responsible = defect.responsible4
+            if (!defect.responsible || defect.responsible == "") {
+                defect.responsible = defect.responsible3
+                level--;
+            }
+            if (!defect.responsible || defect.responsible == "") {
+                defect.responsible = defect.responsible2
+                level--;
+            }
+            if (!defect.responsible || defect.responsible == "") {
+                defect.responsible = defect.responsible1
+                level--;
+            }
+            if (!defect.responsible || defect.responsible == "" || (level < 4 && that.ViewDefectModel.getProperty("/responsibles" + (level+1)) != undefined && that.ViewDefectModel.getProperty("/responsibles" + (level+1)).length > 0 )) {
                 that.MainPODcontroller.showErrorMessageBox(that.MainPODcontroller.getI18n("defect.error.message"));
                 return false;
             }
@@ -332,16 +357,55 @@ sap.ui.define([
         getResponsible: function () {
             var that = this;
             var infoModel = that.MainPODcontroller.getInfoModel();
+            var plant = infoModel.getProperty("/plant");
 
             let BaseProxyURL = infoModel.getProperty("/BaseProxyURL");
             let pathReasonForVarianceApi = "/db/getZResponsibleData";
             let url = BaseProxyURL + pathReasonForVarianceApi;
 
-            let params = {};
+            let params = {
+                plant: plant
+            };
 
             // Callback di successo
             var successCallback = function (response) {
-                this.ViewDefectModel.setProperty("/responsibles", [...[{id: ""}], ...response]);
+               var responsibles1 = [];
+                response.forEach(item => {
+                    if (responsibles1.filter(r => r.description == item.org_level_1).length == 0) {
+                        responsibles1.push({
+                            id: item.id,
+                            description: item.org_level_1
+                        })
+                    }
+                });
+                this.ViewDefectModel.setProperty("/responsibles", response);
+                this.ViewDefectModel.setProperty("/responsibles1", [...[{ id: "" }], ...responsibles1]);
+
+                var id = this.ViewDefectModel.getProperty("/defect/responsible");
+                var responsibleSelected = response.filter(item => item.id == id)[0];
+                this.ViewDefectModel.setProperty("/responsiblesVis2", false);
+                this.ViewDefectModel.setProperty("/responsiblesVis3", false);
+                this.ViewDefectModel.setProperty("/responsiblesVis4", false);
+
+                this.ViewDefectModel.setProperty("/defect/responsible1", responsibles1.filter(item => item.description == responsibleSelected.org_level_1)[0].id)
+                if (responsibleSelected.org_level_2 != null) {
+                    this.changeResponsible1();
+                    var responsibles2 = this.ViewDefectModel.getProperty("/responsibles2");
+                    this.ViewDefectModel.setProperty("/defect/responsible2", responsibles2.filter(item => item.description == responsibleSelected.org_level_2)[0].id)
+                this.ViewDefectModel.setProperty("/responsiblesVis2", true);
+                }
+                if (responsibleSelected.org_level_3 != null) {
+                    this.changeResponsible2();
+                    var responsibles3 = this.ViewDefectModel.getProperty("/responsibles3");
+                    this.ViewDefectModel.setProperty("/defect/responsible3", responsibles3.filter(item => item.description == responsibleSelected.org_level_3)[0].id)
+                this.ViewDefectModel.setProperty("/responsiblesVis3", true);
+                }
+                if (responsibleSelected.org_level_4 != null) {
+                    this.changeResponsible3();
+                    var responsibles4 = this.ViewDefectModel.getProperty("/responsibles4");
+                    this.ViewDefectModel.setProperty("/defect/responsible4", responsibles4.filter(item => item.description == responsibleSelected.org_level_4)[0].id)
+                this.ViewDefectModel.setProperty("/responsiblesVis4", true);
+                }
             };
 
             // Callback di errore
@@ -349,6 +413,96 @@ sap.ui.define([
                 console.log("Chiamata POST fallita: ", error);
             };
             CommonCallManager.callProxy("POST", url, params, true, successCallback, errorCallback, that);
+        },
+        changeResponsible1: function (oEvent) {
+            var that = this;
+            var allResponsible = that.ViewDefectModel.getProperty("/responsibles");
+            var responsibles2 = [];
+
+            if (that.ViewDefectModel.getProperty("/defect/responsible1") != "") {
+                var responsible1 = allResponsible.filter(item => item.id == that.ViewDefectModel.getProperty("/defect/responsible1"))[0].org_level_1;
+                allResponsible.forEach(item => {
+                    if (item.org_level_1 == responsible1 && responsibles2.filter(r => r.description == item.org_level_2).length == 0 && item.org_level_2 != null) {
+                        responsibles2.push({
+                                id: item.id,
+                                description: item.org_level_2
+                            })
+                    }
+                })
+            }
+
+            if (responsibles2.length == 0) {
+                that.ViewDefectModel.setProperty("/responsibles2", []);
+                that.ViewDefectModel.setProperty("/responsiblesVis2", false);
+            }else{
+                that.ViewDefectModel.setProperty("/responsibles2", [...[{ id: "" }], ...responsibles2]);
+                that.ViewDefectModel.setProperty("/responsiblesVis2", true);
+            }
+            that.ViewDefectModel.setProperty("/defect/responsible2", "");
+            that.ViewDefectModel.setProperty("/defect/responsible3", "");
+            that.ViewDefectModel.setProperty("/defect/responsible4", "");
+            that.ViewDefectModel.setProperty("/responsibles3", []);
+            that.ViewDefectModel.setProperty("/responsibles4", []);
+            that.ViewDefectModel.setProperty("/responsiblesVis3", false);
+            that.ViewDefectModel.setProperty("/responsiblesVis4", false);
+        },
+        changeResponsible2: function (oEvent) {
+            var that = this;
+            var allResponsible = that.ViewDefectModel.getProperty("/responsibles");
+            var responsibles3 = [];
+            
+            if (that.ViewDefectModel.getProperty("/defect/responsible2") != "") {
+                var responsible1 = allResponsible.filter(item => item.id == that.ViewDefectModel.getProperty("/defect/responsible1"))[0].org_level_1;
+                var responsible2 = allResponsible.filter(item => item.id == that.ViewDefectModel.getProperty("/defect/responsible2"))[0].org_level_2;
+                allResponsible.forEach(item => {
+                    if (item.org_level_1 == responsible1 && item.org_level_2 == responsible2 && responsibles3.filter(r => r.description == item.org_level_3).length == 0
+                        && item.org_level_3 != null) {
+                        responsibles3.push({
+                                id: item.id,
+                                description: item.org_level_3
+                            })
+                    }
+                })
+            }
+            if (responsibles3.length == 0) {
+                that.ViewDefectModel.setProperty("/responsibles3", []);
+                that.ViewDefectModel.setProperty("/responsiblesVis3", false);
+            }else{
+                that.ViewDefectModel.setProperty("/responsibles3", [...[{ id: "" }], ...responsibles3]);
+                that.ViewDefectModel.setProperty("/responsiblesVis3", true);
+            }
+            that.ViewDefectModel.setProperty("/defect/responsible3", "");
+            that.ViewDefectModel.setProperty("/defect/responsible4", "");
+            that.ViewDefectModel.setProperty("/responsiblesVis4", false);
+            that.ViewDefectModel.setProperty("/responsiblesVis4", []);
+        },
+        changeResponsible3: function (oEvent) {
+            var that = this;
+            var allResponsible = that.ViewDefectModel.getProperty("/responsibles");
+            var responsibles4 = [];
+            
+            if (that.ViewDefectModel.getProperty("/defect/responsible2") != "") {
+                var responsible1 = allResponsible.filter(item => item.id == that.ViewDefectModel.getProperty("/defect/responsible1"))[0].org_level_1;
+                var responsible2 = allResponsible.filter(item => item.id == that.ViewDefectModel.getProperty("/defect/responsible2"))[0].org_level_2;
+                var responsible3 = allResponsible.filter(item => item.id == that.ViewDefectModel.getProperty("/defect/responsible3"))[0].org_level_3;
+                allResponsible.forEach(item => {
+                    if (item.org_level_1 == responsible1 && item.org_level_2 == responsible2 && item.org_level_3 == responsible3 
+                        && responsibles4.filter(r => r.description == item.org_level_4).length == 0 && item.org_level_4 != null) {
+                        responsibles4.push({
+                                id: item.id,
+                                description: item.org_level_4
+                            })
+                    }
+                })
+            }
+            if (responsibles4.length == 0) {
+                that.ViewDefectModel.setProperty("/responsibles4", []);
+                that.ViewDefectModel.setProperty("/responsiblesVis4", false);
+            }else{
+                that.ViewDefectModel.setProperty("/responsibles4", [...[{ id: "" }], ...responsibles4]);
+                that.ViewDefectModel.setProperty("/responsiblesVis4", true);
+            }
+            that.ViewDefectModel.setProperty("/defect/responsible4", "");
         },
         getNotificationType: function () {
             var that = this;

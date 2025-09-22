@@ -116,8 +116,6 @@
                             <Label text="Attachment" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" />
                             <Button text="View attachments" visible="{/defect/hasAttachment}" width="100%" press="onAttachmentPress" />
                         </HBox>
-                    </VBox>
-                    <VBox width="30%" height="100%" renderType="Bare" justifyContent="SpaceBetween">
                         <HBox width="100%" renderType="Bare" alignItems="Center">
                             <Label text="Create QN" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"  />
                             <CheckBox text="" width="50%" selected="{/defect/create_qn}" enabled="{= ${/modify} === 'on' &amp;&amp; ${/defect/create_qn} === false }" class="markingMediumLabelValue"/>
@@ -126,6 +124,8 @@
                             <Label text="Blocking" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"  />
                             <CheckBox text="" width="50%" selected="{/defect/blocking}" enabled="{= ${/modify} === 'on' }" class="markingMediumLabelValue"/>
                         </HBox>
+                    </VBox>
+                    <VBox width="30%" height="100%" renderType="Bare" justifyContent="SpaceBetween">
                         <HBox width="100%" renderType="Bare" alignItems="Center" >
                             <Label text="Notification Type" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" />
                             <Label text="{/defect/notification_type_description}" width="50%" class="markingMediumLabelValue" visible="{= ${/modify} === 'off' }"/>
@@ -161,16 +161,33 @@
                             <Label text="Defect Note" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
                             <TextArea width="50%" value="{/defect/defect_note}" class="markingMediumLabelValue" editable="{= ${/modify} === 'on' &amp;&amp; ${/defect/create_qn} === true }"/>
                         </HBox>
-                        <HBox width="100%" renderType="Bare" alignItems="Center" >
+                        <HBox width="100%" renderType="Bare" alignItems="Center" visible="{= ${/modify} === 'off' }">
                             <Label text="Responsible" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" />
-                            <Label text="{/defect/responsible_description}" width="50%" class="markingMediumLabelValue" visible="{= ${/modify} === 'off' }"/>
-                            <Select selectedKey="{/defect/responsible}" width="50%" items="{/responsibles}" visible="{= ${/modify} === 'on' &amp;&amp; ${/defect/create_qn} === true }">
+                            <Label text="{/defect/responsible_description}" width="50%" class="markingMediumLabelValue" />
+                        </HBox> 
+                        <HBox width="100%" renderType="Bare" alignItems="Center" visible="{= ${/modify} === 'on' &amp;&amp; ${/defect/create_qn} === true }">
+                            <Label text="Responsible 1" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" required="true"/>
+                            <Select change="changeResponsible1" selectedKey="{/defect/responsible1}" width="50%" items="{/responsibles1}">
                                 <core:Item key="{id}" text="{description}" />
                             </Select>
-                        </HBox> 
-                        <HBox width="100%" renderType="Bare" alignItems="Center" >
-                            <Label text="Opened By" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
-                            <Label width="50%" text="{/defect/user}" class="markingMediumLabelValue"/>
+                        </HBox>
+                        <HBox width="100%" renderType="Bare" alignItems="Center" visible="{= ${/modify} === 'on' &amp;&amp; ${/defect/create_qn} === true &amp;&amp; ${/responsiblesVis2} === true }">
+                            <Label text="Responsible 2" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" required="true"/>
+                            <Select change="changeResponsible2" selectedKey="{/defect/responsible2}" width="50%" items="{/responsibles2}">
+                                <core:Item key="{id}" text="{description}" />
+                            </Select>
+                        </HBox>
+                        <HBox width="100%" renderType="Bare" alignItems="Center" visible="{= ${/modify} === 'on' &amp;&amp; ${/defect/create_qn} === true &amp;&amp; ${/responsiblesVis3} === true }">
+                            <Label text="Responsible 3" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" required="true"/>
+                            <Select change="changeResponsible3" selectedKey="{/defect/responsible3}" width="50%" items="{/responsibles3}">
+                                <core:Item key="{id}" text="{description}" />
+                            </Select>
+                        </HBox>
+                        <HBox width="100%" renderType="Bare" alignItems="Center" visible="{= ${/modify} === 'on' &amp;&amp; ${/defect/create_qn} === true &amp;&amp; ${/responsiblesVis4} === true }">
+                            <Label text="Responsible 4" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" required="true"/>
+                            <Select change="changeResponsible4" selectedKey="{/defect/responsible4}" width="50%" items="{/responsibles4}">
+                                <core:Item key="{id}" text="{description}" />
+                            </Select>
                         </HBox>
                     </VBox>
                     <VBox width="30%" height="100%" renderType="Bare" justifyContent="SpaceBetween">
@@ -193,6 +210,10 @@
                         <HBox width="100%" renderType="Bare" alignItems="Center" >
                             <Label text="Approval User" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
                             <Label width="50%" text="{/defect/approval_user}" class="markingMediumLabelValue"/>
+                        </HBox>
+                        <HBox width="100%" renderType="Bare" alignItems="Center" >
+                            <Label text="Opened By" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
+                            <Label width="50%" text="{/defect/user}" class="markingMediumLabelValue"/>
                         </HBox>
                         <HBox width="100%" renderType="Bare" alignItems="Center">
                             <Label text="Creation Date" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
