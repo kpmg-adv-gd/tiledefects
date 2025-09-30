@@ -181,24 +181,26 @@ sap.ui.define([
                 return false;
             }
 
-            // Logica per il recupero del Responsible
-            var level = 4;
-            defect.responsible = defect.responsible4
-            if (!defect.responsible || defect.responsible == "") {
-                defect.responsible = defect.responsible3
-                level--;
-            }
-            if (!defect.responsible || defect.responsible == "") {
-                defect.responsible = defect.responsible2
-                level--;
-            }
-            if (!defect.responsible || defect.responsible == "") {
-                defect.responsible = defect.responsible1
-                level--;
-            }
-            if (!defect.responsible || defect.responsible == "" || (level < 4 && that.ViewDefectModel.getProperty("/responsibles" + (level+1)) != undefined && that.ViewDefectModel.getProperty("/responsibles" + (level+1)).length > 0 )) {
-                that.MainPODcontroller.showErrorMessageBox(that.MainPODcontroller.getI18n("defect.error.message"));
-                return false;
+            if (defect.create_qn) {
+                // Logica per il recupero del Responsible
+                var level = 4;
+                defect.responsible = defect.responsible4
+                if (!defect.responsible || defect.responsible == "") {
+                    defect.responsible = defect.responsible3
+                    level--;
+                }
+                if (!defect.responsible || defect.responsible == "") {
+                    defect.responsible = defect.responsible2
+                    level--;
+                }
+                if (!defect.responsible || defect.responsible == "") {
+                    defect.responsible = defect.responsible1
+                    level--;
+                }
+                if (!defect.responsible || defect.responsible == "" || (level < 4 && that.ViewDefectModel.getProperty("/responsibles" + (level+1)) != undefined && that.ViewDefectModel.getProperty("/responsibles" + (level+1)).length > 0 )) {
+                    that.MainPODcontroller.showErrorMessageBox(that.MainPODcontroller.getI18n("defect.error.message"));
+                    return false;
+                }
             }
 
             // Check su Costraint della Priority
