@@ -507,7 +507,7 @@ sap.ui.define([
             };
             // Callback di errore
             var errorCallback = function(error) {
-                that.showErrorMessageBox(error);
+                that.showErrorMessageBox(that.getI18n("defect.approve.error.message"));
             };
             CommonCallManager.callProxy("POST", url, params, true, successCallback, errorCallback, that, true, true);
 
@@ -691,7 +691,7 @@ sap.ui.define([
             // Callback di errore
             var errorCallback = function(error) {
                 that.showErrorMessageBox(error);
-                console.log("Chiamata POST fallita:", error);
+                that.showErrorMessageBox(that.getI18n("defect.close.error.message"));
             };
             CommonCallManager.callProxy("POST", url, params, true, successCallback, errorCallback, that, true, true);
         },
