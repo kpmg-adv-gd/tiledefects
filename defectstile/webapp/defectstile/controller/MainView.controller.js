@@ -230,19 +230,23 @@ sap.ui.define([
                 var defSTD = that.oDefectModelStandard.getProperty("/");
                 that.oDefectModelStandard.setProperty("/", [...defSTD, ...defectsStandard]);
                 defects.forEach(item => {
-                    var defStd = defectsStandard.filter(elem => elem.id == item.id)
-                    if (defStd.length > 0) {
-                        defStd = defStd[0];
-                        item.wc = defStd.workCenter;
-                        item.numDefect = defStd.quantity;
-                        item.varianceDesc = that.oVarianceModel.getProperty("/").filter(variance => variance.cause == item.variance)[0].description;
-                        item.groupDesc = that.oGroupModel.getProperty("/").filter(group => group.group == item.group)[0].description;
-                        item.codeDesc = that.oGroupModel.getProperty("/").filter(group => group.group == item.group)[0].associateCodes.filter(code => code.code == item.code)[0].description;
+                    try {
                         item.okClose = (!item.create_qn || (item.system_status != null && item.system_status.includes("ATCO")) || item.qn_annullata) && item.status == "OPEN";
-                        item.hasAttachment = defStd.fileIds && defStd.fileIds.length > 0;
-                        if (item.hasAttachment) {
-                            item.files = defStd.fileIds;
+                        var defStd = defectsStandard.filter(elem => elem.id == item.id)
+                        if (defStd.length > 0) {
+                            defStd = defStd[0];
+                            item.wc = defStd.workCenter;
+                            item.numDefect = defStd.quantity;
+                            item.varianceDesc = that.oVarianceModel.getProperty("/").filter(variance => variance.cause == item.variance)[0].description;
+                            item.groupDesc = that.oGroupModel.getProperty("/").filter(group => group.group == item.group)[0].description;
+                            item.codeDesc = that.oGroupModel.getProperty("/").filter(group => group.group == item.group)[0].associateCodes.filter(code => code.code == item.code)[0].description;
+                            item.hasAttachment = defStd.fileIds && defStd.fileIds.length > 0;
+                            if (item.hasAttachment) {
+                                item.files = defStd.fileIds;
+                            }
                         }
+                    } catch (e) {
+                        
                     }
                 });
                 that.oDefectModel.setProperty("/", defects);
