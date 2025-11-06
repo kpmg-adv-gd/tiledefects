@@ -218,9 +218,9 @@ sap.ui.define([
                 console.log("errore nel parsing json Priority");
             }
             // Check su Costraint della Notification Type
-            if (defect.createQN) {
+            if (defect.create_qn) {
                 try {
-                    var notificationTypeScript = JSON.parse(that.ViewDefectModel.getProperty("/notificationTypies").filter(item => item.notification_type == defect.notificationType)[0].costraints);
+                    var notificationTypeScript = JSON.parse(that.ViewDefectModel.getProperty("/notificationTypies").filter(item => item.notification_type == defect.notification_type)[0].costraints);
                     for (let chiave in notificationTypeScript) {
                         for (let key in notificationTypeScript[chiave]) {
                             if ((notificationTypeScript[chiave][key] == true && defect[key] == "") || (notificationTypeScript[chiave][key].length > 0 && defect[key] != notificationTypeScript[chiave][key])) {
