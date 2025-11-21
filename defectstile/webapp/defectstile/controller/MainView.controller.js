@@ -621,7 +621,7 @@ sap.ui.define([
             var qnCode = that.byId("reportQnInputId").getValue();
             var priority = that.byId("reportPriorityInputId").getValue();
             var status = that.byId("reportStatusInputId").getValue();
-            var wbe = that.byId("wbeInputId").getValue();
+            var wbe = that.byId("reportWbeInputId").getValue();
 
             let params = {
                 "plant": plant,
@@ -680,7 +680,7 @@ sap.ui.define([
                 comments: "",
                 sfc: defect.sfc,
                 order: defect.dm_order,
-                qnCode: defect.qn_code == "" ? null : defect.qn_code
+                qnCode: defect.qn_code == "" ? null : defect.qn_code,
             };
 
             let BaseProxyURL = that.getInfoModel().getProperty("/BaseProxyURL");
