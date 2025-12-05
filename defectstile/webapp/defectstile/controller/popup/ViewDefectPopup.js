@@ -181,6 +181,11 @@ sap.ui.define([
                 return false;
             }
 
+            if (defect.create_qn && defect.attachments.length > 0 && defect.defect_note == "") {
+                that.MainPODcontroller.showErrorMessageBox(that.MainPODcontroller.getI18n("defect.error.message"));
+                return false;
+            }
+
             if (defect.create_qn) {
                 // Logica per il recupero del Responsible
                 var level = 4;
