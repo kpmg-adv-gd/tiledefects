@@ -16,6 +16,7 @@ sap.ui.define([
         ViewDefectPopup: new ViewDefectPopup(),
         oVarianceModel: new JSONModel(),
         tabSelection: null,
+        _approveQNDebounce: {},
 
         onInit: function () {
 			BaseController.prototype.onInit.apply(this, arguments);				           
@@ -435,6 +436,19 @@ sap.ui.define([
             }
 
 			var defect = that.getInfoModel().getProperty("/selectedDefect");
+            
+            // Debounce: controlla se la funzione è stata chiamata di recente per questo defect.id
+            var currentTime = Date.now();
+            var lastCallTime = that._approveQNDebounce[defect.id] || 0;
+            var timeDiff = currentTime - lastCallTime;
+            var sec = 60;
+            if (timeDiff < (sec*1000)) {
+                that.showErrorMessageBox("Approval for the selected defect has already been requested, please wait a few seconds before trying again.");
+                return;
+            }
+            // Aggiorna il timestamp dell'ultima chiamata
+            that._approveQNDebounce[defect.id] = currentTime;
+            
             let plant = that.getInfoModel().getProperty("/plant");
             let idDefect = defect.id;
             var wbeSplit = defect.wbe.split(".");
