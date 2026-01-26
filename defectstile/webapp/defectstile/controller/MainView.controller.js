@@ -11,11 +11,13 @@ sap.ui.define([
 	return BaseController.extend("kpmg.custom.plugin.defectstile.defectstile.controller.MainView", {
         oDefectModel: new JSONModel(),
         oFilterModel: new JSONModel(),
+        oVisibleModel: new JSONModel(),
         oDefectModelStandard: new JSONModel(),
         oGroupModel: new JSONModel(),
         ViewDefectPopup: new ViewDefectPopup(),
         oVarianceModel: new JSONModel(),
         tabSelection: null,
+        _approveQNDebounce: {},
 
         onInit: function () {
 			BaseController.prototype.onInit.apply(this, arguments);				           
@@ -26,6 +28,7 @@ sap.ui.define([
             
             this.oFilterModel.setSizeLimit(10000);
             this.getView().setModel(this.oFilterModel,"FilterModel");
+            this.getView().setModel(this.oVisibleModel,"VisibleModel");
 
             this.oDefectModel.setProperty("/", []); 
             this.oDefectModelStandard.setProperty("/", []); 
@@ -34,11 +37,42 @@ sap.ui.define([
             sap.ui.getCore().getEventBus().subscribe("defect", "reloadReportDefect", this.onReportGoPress, this);
             sap.ui.getCore().getEventBus().subscribe("defect", "cancelModify", this.cancelModify, this);
 
+            this.oVisibleModel.setProperty("/visibleManageDefect", false)
+            this.getUserGroup();
+
 		},
 
         onAfterRendering: function(){
             var that = this;
             that.getVariance();
+        },
+
+        getUserGroup: function () {
+            var that = this;
+            let plant = that.getInfoModel().getProperty("/plant");
+            
+            let BaseProxyURL = that.getInfoModel().getProperty("/BaseProxyURL");
+            let pathGetMarkingDataApi = "/api/getUserPhase";
+            let url = BaseProxyURL + pathGetMarkingDataApi;
+
+            let params = {
+                plant: plant,
+                userId: that.getInfoModel().getProperty("/user_id")
+            };
+
+            // Callback di successo
+            var successCallback = function (response) {
+                if (response == "Testing") {
+                    that.oVisibleModel.setProperty("/visibleManageDefect", false)
+                }else{
+                    that.oVisibleModel.setProperty("/visibleManageDefect", true)
+                }
+            };
+            // Callback di errore
+            var errorCallback = function (error) {
+                console.log("Chiamata POST fallita: ", error);
+            };
+            CommonCallManager.callProxy("POST", url, params, true, successCallback, errorCallback, that);
         },
 
         // Intercetta cambio di sezione
@@ -435,6 +469,19 @@ sap.ui.define([
             }
 
 			var defect = that.getInfoModel().getProperty("/selectedDefect");
+            
+            // Debounce: controlla se la funzione è stata chiamata di recente per questo defect.id
+            var currentTime = Date.now();
+            var lastCallTime = that._approveQNDebounce[defect.id] || 0;
+            var timeDiff = currentTime - lastCallTime;
+            var sec = 60;
+            if (timeDiff < (sec*1000)) {
+                that.showErrorMessageBox("Approval for the selected defect has already been requested, please wait a few seconds before trying again.");
+                return;
+            }
+            // Aggiorna il timestamp dell'ultima chiamata
+            that._approveQNDebounce[defect.id] = currentTime;
+            
             let plant = that.getInfoModel().getProperty("/plant");
             let idDefect = defect.id;
             var wbeSplit = defect.wbe.split(".");
@@ -621,7 +668,7 @@ sap.ui.define([
             var qnCode = that.byId("reportQnInputId").getValue();
             var priority = that.byId("reportPriorityInputId").getValue();
             var status = that.byId("reportStatusInputId").getValue();
-            var wbe = that.byId("wbeInputId").getValue();
+            var wbe = that.byId("reportWbeInputId").getValue();
 
             let params = {
                 "plant": plant,
