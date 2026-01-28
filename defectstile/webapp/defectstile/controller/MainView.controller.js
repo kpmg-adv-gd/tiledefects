@@ -38,7 +38,7 @@ sap.ui.define([
             sap.ui.getCore().getEventBus().subscribe("defect", "cancelModify", this.cancelModify, this);
 
             this.oVisibleModel.setProperty("/visibleManageDefect", false)
-            this.getUserGroup();
+            this.getUserPhase();
 
 		},
 
@@ -47,7 +47,7 @@ sap.ui.define([
             that.getVariance();
         },
 
-        getUserGroup: function () {
+        getUserPhase: function () {
             var that = this;
             let plant = that.getInfoModel().getProperty("/plant");
             
