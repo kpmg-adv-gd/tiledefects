@@ -133,6 +133,12 @@
                                                 <Text wrapping="false" text="{DefectModel>coding_description}"  />
                                             </t:template>
                                         </t:Column>
+                                        <t:Column sortProperty="phase" filterProperty="phase" width="8.75%">
+                                            <Label text="{i18n>defects.table.phase}"  />
+                                            <t:template>
+                                                <Text wrapping="false" text="{DefectModel>phase}"  />
+                                            </t:template>
+                                        </t:Column>
                                         <t:Column sortProperty="title" filterProperty="title" width="8.75%">
                                             <Label text="{i18n>defects.table.title}"  />
                                             <t:template>
