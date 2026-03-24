@@ -84,11 +84,11 @@
                         <HBox width="100%" renderType="Bare" alignItems="Center">
                             <Label text="Title" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" />
                             <Label  width="50%" text="{/defect/title}" class="markingMediumLabelValue" visible="{= ${/modify} === 'off' }"/>
-                            <Input  width="50%" value="{/defect/title}" class="markingMediumLabelValue" visible="{= ${/modify} === 'on' }"/>
+                            <Input  width="50%" value="{/defect/title}" class="markingMediumLabelValue" visible="{= ${/modify} === 'on' }" tooltip="Defect identification title"/>
                         </HBox>
                         <HBox width="100%" renderType="Bare" alignItems="Center">
                             <Label text="Description" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
-                            <TextArea width="50%" value="{/defect/description}" class="markingMediumLabelValue" editable="{= ${/modify} === 'on' }"/>
+                            <TextArea width="50%" value="{/defect/description}" class="markingMediumLabelValue" editable="{= ${/modify} === 'on' }"  tooltip="Detailed description of the defect"/>
                         </HBox>
                         <HBox width="100%" renderType="Bare" alignItems="Center">
                             <Label text="Code Group" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" />
@@ -101,14 +101,14 @@
                         <HBox width="100%" renderType="Bare" alignItems="Center">
                             <Label text="Priority" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" />
                             <Label text="{/defect/priority_description}" width="50%" class="markingMediumLabelValue" visible="{= ${/modify} === 'off' }"/>
-                            <Select selectedKey="{/defect/priority}" width="50%" items="{/priorities}" visible="{= ${/modify} === 'on' }">
+                            <Select selectedKey="{/defect/priority}" width="50%" items="{/priorities}" visible="{= ${/modify} === 'on' }" tooltip="Level of priority to be assigned to the defect">
                                 <core:Item key="{priority}" text="{description}" />
                             </Select>
                         </HBox>
                         <HBox width="100%" renderType="Bare" alignItems="Center">
                             <Label text="Variance" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" />
                             <Label text="{/defect/varianceDesc}" width="50%" class="markingMediumLabelValue" visible="{= ${/modify} === 'off' }"/>
-                            <Select selectedKey="{/defect/variance}" width="50%" items="{/variances}" visible="{= ${/modify} === 'on' }">
+                            <Select selectedKey="{/defect/variance}" width="50%" items="{/variances}" visible="{= ${/modify} === 'on' }" tooltip="Type of variance associated with the defect">
                                 <core:Item key="{cause}" text="{description}" />
                             </Select>
                         </HBox>
@@ -118,39 +118,39 @@
                         </HBox>
                         <HBox width="100%" renderType="Bare" alignItems="Center">
                             <Label text="Create QN" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"  />
-                            <CheckBox text="" width="50%" selected="{/defect/create_qn}" enabled="{= ${/modify} === 'on' &amp;&amp; ${/defect/create_qn} === false }" class="markingMediumLabelValue"/>
+                            <CheckBox text="" width="50%" selected="{/defect/create_qn}" enabled="{= ${/modify} === 'on' &amp;&amp; ${/defect/create_qn} === false }" class="markingMediumLabelValue" tooltip="Indicate whether a Quality Notification (QN) should be generated" />  
                         </HBox>
                         <HBox width="100%" renderType="Bare" alignItems="Center">
                             <Label text="Blocking" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"  />
-                            <CheckBox text="" width="50%" selected="{/defect/blocking}" enabled="{= ${/modify} === 'on' }" class="markingMediumLabelValue"/>
+                            <CheckBox text="" width="50%" selected="{/defect/blocking}" enabled="{= ${/modify} === 'on' }" class="markingMediumLabelValue" tooltip="Select if the defect blocks the closure of the SFC" />  
                         </HBox>
                     </VBox>
                     <VBox width="30%" height="100%" renderType="Bare" justifyContent="SpaceBetween">
                         <HBox width="100%" renderType="Bare" alignItems="Center" >
                             <Label text="Notification Type" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" />
                             <Label text="{/defect/notification_type_description}" width="50%" class="markingMediumLabelValue" visible="{= ${/modify} === 'off' }"/>
-                            <Select selectedKey="{/defect/notification_type}" width="50%" items="{/notificationTypies}" visible="{= ${/modify} === 'on' &amp;&amp; ${/defect/create_qn} === true }">
+                            <Select selectedKey="{/defect/notification_type}" width="50%" items="{/notificationTypies}" visible="{= ${/modify} === 'on' &amp;&amp; ${/defect/create_qn} === true }" tooltip="Distinguishes between Notification type XA and XB">
                                 <core:Item key="{notification_type}" text="{description}" />
                             </Select>
                         </HBox>
                         <HBox width="100%" renderType="Bare" alignItems="Center" >
                             <Label text="Coding Group" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" />
                             <Label text="{/defect/coding_group_description}" width="50%" class="markingMediumLabelValue" visible="{= ${/modify} === 'off' }"/>
-                            <Select selectedKey="{/defect/coding_group}" width="50%" items="{/codingGroups}" visible="{= ${/modify} === 'on' &amp;&amp; ${/defect/create_qn} === true }" change="onChangeCoding">
+                            <Select selectedKey="{/defect/coding_group}" width="50%" items="{/codingGroups}" visible="{= ${/modify} === 'on' &amp;&amp; ${/defect/create_qn} === true }" change="onChangeCoding" tooltip="Group of areas to which the defect belongs">
                                 <core:Item key="{coding_group}" text="{coding_group_description}" />
                             </Select>
                         </HBox>
                         <HBox width="100%" renderType="Bare" alignItems="Center" >
                             <Label text="Coding" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" />
                             <Label text="{/defect/coding_description}" width="50%" class="markingMediumLabelValue" visible="{= ${/modify} === 'off' }"/>
-                            <Select selectedKey="{/defect/coding_id}" width="50%" items="{/codings}" visible="{= ${/modify} === 'on' &amp;&amp; ${/defect/create_qn} === true }">
+                            <Select selectedKey="{/defect/coding_id}" width="50%" items="{/codings}" visible="{= ${/modify} === 'on' &amp;&amp; ${/defect/create_qn} === true }" tooltip="Represents the area within which the defect is identified">
                                 <core:Item key="{coding_id}" text="{coding_description}" />
                             </Select>
                         </HBox>
                         <HBox width="100%" renderType="Bare" alignItems="Center" >
                             <Label text="Replaced in Assembly" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" />
                             <Label text="{= ${/defect/replaced_in_assembly} === true ? 'YES' : ${/defect/replaced_in_assembly} === false ? 'NO' : '' }" width="50%" class="markingMediumLabelValue" visible="{= ${/modify} === 'off' }"/>
-                            <RadioButtonGroup selectedIndex="{/defect/modelRadioReplaced}" width="50%" visible="{= ${/modify} === 'on' &amp;&amp; ${/defect/create_qn} === true }">
+                            <RadioButtonGroup selectedIndex="{/defect/modelRadioReplaced}" width="50%" visible="{= ${/modify} === 'on' &amp;&amp; ${/defect/create_qn} === true }" tooltip="Indicates whether the defective component was replaced during assembly">
                                 <buttons>
                                     <RadioButton text="YES" groupName="group1" selected="{= ${/defect/replaced_in_assembly} === true }" />
                                     <RadioButton text="NO" groupName="group1" selected="{= ${/defect/replaced_in_assembly} === false }" />
@@ -159,7 +159,7 @@
                         </HBox>
                         <HBox width="100%" renderType="Bare" alignItems="Center" >
                             <Label text="Defect Note" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd"/>
-                            <TextArea width="50%" value="{/defect/defect_note}" class="markingMediumLabelValue" editable="{= ${/modify} === 'on' &amp;&amp; ${/defect/create_qn} === true }"/>
+                            <TextArea width="50%" value="{/defect/defect_note}" class="markingMediumLabelValue" editable="{= ${/modify} === 'on' &amp;&amp; ${/defect/create_qn} === true }" tooltip="Any additional notes"/>
                         </HBox>
                         <HBox width="100%" renderType="Bare" alignItems="Center" visible="{= ${/modify} === 'off' }">
                             <Label text="Responsible" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" />
@@ -167,25 +167,25 @@
                         </HBox> 
                         <HBox width="100%" renderType="Bare" alignItems="Center" visible="{= ${/modify} === 'on' &amp;&amp; ${/defect/create_qn} === true }">
                             <Label text="Responsible 1" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" required="true"/>
-                            <Select change="changeResponsible1" selectedKey="{/defect/responsible1}" width="50%" items="{/responsibles1}">
+                            <Select change="changeResponsible1" selectedKey="{/defect/responsible1}" width="50%" items="{/responsibles1}" tooltip="Department or person responsible for managing the defect">
                                 <core:Item key="{id}" text="{description}" />
                             </Select>
                         </HBox>
                         <HBox width="100%" renderType="Bare" alignItems="Center" visible="{= ${/modify} === 'on' &amp;&amp; ${/defect/create_qn} === true &amp;&amp; ${/responsiblesVis2} === true }">
                             <Label text="Responsible 2" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" required="true"/>
-                            <Select change="changeResponsible2" selectedKey="{/defect/responsible2}" width="50%" items="{/responsibles2}">
+                            <Select change="changeResponsible2" selectedKey="{/defect/responsible2}" width="50%" items="{/responsibles2}" tooltip="Department or person responsible for managing the defect">
                                 <core:Item key="{id}" text="{description}" />
                             </Select>
                         </HBox>
                         <HBox width="100%" renderType="Bare" alignItems="Center" visible="{= ${/modify} === 'on' &amp;&amp; ${/defect/create_qn} === true &amp;&amp; ${/responsiblesVis3} === true }">
                             <Label text="Responsible 3" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" required="true"/>
-                            <Select change="changeResponsible3" selectedKey="{/defect/responsible3}" width="50%" items="{/responsibles3}">
+                            <Select change="changeResponsible3" selectedKey="{/defect/responsible3}" width="50%" items="{/responsibles3}" tooltip="Department or person responsible for managing the defect">
                                 <core:Item key="{id}" text="{description}" />
                             </Select>
                         </HBox>
                         <HBox width="100%" renderType="Bare" alignItems="Center" visible="{= ${/modify} === 'on' &amp;&amp; ${/defect/create_qn} === true &amp;&amp; ${/responsiblesVis4} === true }">
                             <Label text="Responsible 4" width="50%" class="markingMediumLabel markingMediumLabelWidth13Rem sapUiSmallMarginEnd" required="true"/>
-                            <Select change="changeResponsible4" selectedKey="{/defect/responsible4}" width="50%" items="{/responsibles4}">
+                            <Select change="changeResponsible4" selectedKey="{/defect/responsible4}" width="50%" items="{/responsibles4}" tooltip="Department or person responsible for managing the defect">
                                 <core:Item key="{id}" text="{description}" />
                             </Select>
                         </HBox>
@@ -229,6 +229,7 @@
                 <HBox width="90%" height="10%"  renderType="Bare" alignItems="Center" justifyContent="End">
                     <Button text="Modify" type="Emphasized" press="onPressModify" class="sapUiSmallMarginEnd" visible="{= ${/tabSelection} === 'reportDefect' &amp;&amp; ${/modify} === 'off' &amp;&amp; ${/notQN} === 'on' }" />
                     <Button text="Cancel" type="Emphasized" press="onCancelModify" class="sapUiSmallMarginEnd" />
+                    <Button text="Download Info" type="Emphasized" press="onDownloadInfo" class="sapUiSmallMarginEnd"/>
                     <Button text="Save" type="Emphasized" press="onSaveModifyPopup" class="sapUiSmallMarginEnd" visible="{= ${/modify} === 'on' }" />
                 </HBox> 
             </VBox>
