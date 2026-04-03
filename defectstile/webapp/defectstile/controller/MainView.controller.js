@@ -42,6 +42,28 @@ sap.ui.define([
 
 		},
 
+        checkParamsURL: function () {
+            var sWbe = this.getUrlParameter("WBE");
+            var sSfc = this.getUrlParameter("SFC");
+            if (sWbe != null && sSfc != null && sWbe != "" && sSfc != "") {
+                this.getView().byId("wbeInputId").setValue(sWbe);
+                this.getView().byId("sfcInputId").setValue(sSfc);
+                this.onGoPress();
+            }
+        },
+
+        getUrlParameter: function(sParam) {
+            var sSearch = window.location.href;
+            var aParams = sSearch.split("&");
+            for (var i = 0; i < aParams.length; i++) {
+                var aPair = aParams[i].split("=");
+                if (decodeURIComponent(aPair[0]) === sParam) {
+                    return aPair[1] ? decodeURIComponent(aPair[1]) : "";
+                }
+            }
+            return null;
+        },
+
         onAfterRendering: function(){
             var that = this;
             that.getVariance();
@@ -233,6 +255,7 @@ sap.ui.define([
             var successCallback = function(response) {
                 that.oDefectModel.setProperty("/", response);
                 that.oDefectModel.setProperty("/filtered", response);
+                that.checkParamsURL();
                 response.forEach(item => {
                     that.getDefectStandard(item.sfc, "/filtered");
                 });
