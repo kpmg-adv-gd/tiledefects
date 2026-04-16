@@ -43,12 +43,16 @@ sap.ui.define([
 		},
 
         checkParamsURL: function () {
+            var that = this;
             var sWbe = this.getUrlParameter("WBE");
-            var sSfc = this.getUrlParameter("SFC");
-            if (sWbe != null && sSfc != null && sWbe != "" && sSfc != "") {
-                this.getView().byId("wbeInputId").setValue(sWbe);
-                this.getView().byId("sfcInputId").setValue(sSfc);
-                this.onGoPress();
+            if (sWbe != null && sWbe != "") {
+                // Switch to report tab
+                var oIconTabBar = this.getView().byId("mainTabBar");
+                oIconTabBar.setSelectedKey("reportDefect");
+                this.tabSelection = "reportDefect";
+                // Set report filter values
+                this.byId("reportWbeInputId").setValue(sWbe);
+                that.getSFCbyFilter();
             }
         },
 
@@ -87,7 +91,8 @@ sap.ui.define([
                 if (response == "Testing") {
                     that.oVisibleModel.setProperty("/visibleManageDefect", false)
                 }else{
-                    that.oVisibleModel.setProperty("/visibleManageDefect", true)
+                    that.oVisibleModel.setProperty("/visibleManageDefect", true);
+                    that.checkParamsURL();
                 }
             };
             // Callback di errore
@@ -191,7 +196,8 @@ sap.ui.define([
                         })
                     });
                     that.oGroupModel.refresh();
-                    that.getDefectsToApprove();
+                    var oIconTabBar = that.getView().byId("mainTabBar");
+                    if (oIconTabBar.getSelectedKey() != "reportDefect") that.getDefectsToApprove();
                 }
             };
             // Callback di errore
@@ -255,7 +261,6 @@ sap.ui.define([
             var successCallback = function(response) {
                 that.oDefectModel.setProperty("/", response);
                 that.oDefectModel.setProperty("/filtered", response);
-                that.checkParamsURL();
                 response.forEach(item => {
                     that.getDefectStandard(item.sfc, "/filtered");
                 });
