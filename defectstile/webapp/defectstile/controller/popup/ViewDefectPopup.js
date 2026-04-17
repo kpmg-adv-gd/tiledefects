@@ -283,7 +283,6 @@ sap.ui.define([
             CommonCallManager.callProxy("POST", url, params, true, successCallback, errorCallback, that);
         },
 
-        
         getPriority: function () {
             var that = this;
 
