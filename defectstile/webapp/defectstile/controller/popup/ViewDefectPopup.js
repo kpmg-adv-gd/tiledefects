@@ -291,8 +291,11 @@ sap.ui.define([
             let BaseProxyURL = infoModel.getProperty("/BaseProxyURL");
             let pathGetMarkingDataApi = "/db/getZPriorityData";
             let url = BaseProxyURL + pathGetMarkingDataApi;
+            var plant = infoModel.getProperty("/plant");
 
-            let params = { };
+            let params = {
+                plant: plant
+             };
 
             // Callback di successo
             var successCallback = function (response) {
