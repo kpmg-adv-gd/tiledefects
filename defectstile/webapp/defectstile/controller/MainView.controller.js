@@ -42,6 +42,32 @@ sap.ui.define([
 
 		},
 
+        checkParamsURL: function () {
+            var that = this;
+            var sWbe = this.getUrlParameter("WBE");
+            if (sWbe != null && sWbe != "") {
+                // Switch to report tab
+                var oIconTabBar = this.getView().byId("mainTabBar");
+                oIconTabBar.setSelectedKey("reportDefect");
+                this.tabSelection = "reportDefect";
+                // Set report filter values
+                this.byId("reportWbeInputId").setValue(sWbe);
+                that.getSFCbyFilter();
+            }
+        },
+
+        getUrlParameter: function(sParam) {
+            var sSearch = window.location.href;
+            var aParams = sSearch.split("&");
+            for (var i = 0; i < aParams.length; i++) {
+                var aPair = aParams[i].split("=");
+                if (decodeURIComponent(aPair[0]) === sParam) {
+                    return aPair[1] ? decodeURIComponent(aPair[1]) : "";
+                }
+            }
+            return null;
+        },
+
         onAfterRendering: function(){
             var that = this;
             that.getVariance();
@@ -65,7 +91,8 @@ sap.ui.define([
                 if (response == "Testing") {
                     that.oVisibleModel.setProperty("/visibleManageDefect", false)
                 }else{
-                    that.oVisibleModel.setProperty("/visibleManageDefect", true)
+                    that.oVisibleModel.setProperty("/visibleManageDefect", true);
+                    that.checkParamsURL();
                 }
             };
             // Callback di errore
@@ -169,7 +196,8 @@ sap.ui.define([
                         })
                     });
                     that.oGroupModel.refresh();
-                    that.getDefectsToApprove();
+                    var oIconTabBar = that.getView().byId("mainTabBar");
+                    if (oIconTabBar.getSelectedKey() != "reportDefect") that.getDefectsToApprove();
                 }
             };
             // Callback di errore
