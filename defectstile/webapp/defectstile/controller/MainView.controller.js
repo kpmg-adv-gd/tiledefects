@@ -37,8 +37,7 @@ sap.ui.define([
             sap.ui.getCore().getEventBus().subscribe("defect", "reloadReportDefect", this.onReportGoPress, this);
             sap.ui.getCore().getEventBus().subscribe("defect", "cancelModify", this.cancelModify, this);
 
-            this.oVisibleModel.setProperty("/visibleManageDefect", false)
-            this.getUserPhase();
+            this.checkParamsURL();
 
 		},
 
@@ -71,35 +70,6 @@ sap.ui.define([
         onAfterRendering: function(){
             var that = this;
             that.getVariance();
-        },
-
-        getUserPhase: function () {
-            var that = this;
-            let plant = that.getInfoModel().getProperty("/plant");
-            
-            let BaseProxyURL = that.getInfoModel().getProperty("/BaseProxyURL");
-            let pathGetMarkingDataApi = "/api/getUserPhase";
-            let url = BaseProxyURL + pathGetMarkingDataApi;
-
-            let params = {
-                plant: plant,
-                userId: that.getInfoModel().getProperty("/user_id")
-            };
-
-            // Callback di successo
-            var successCallback = function (response) {
-                if (response == "Testing") {
-                    that.oVisibleModel.setProperty("/visibleManageDefect", false)
-                }else{
-                    that.oVisibleModel.setProperty("/visibleManageDefect", true);
-                    that.checkParamsURL();
-                }
-            };
-            // Callback di errore
-            var errorCallback = function (error) {
-                console.log("Chiamata POST fallita: ", error);
-            };
-            CommonCallManager.callProxy("POST", url, params, true, successCallback, errorCallback, that);
         },
 
         // Intercetta cambio di sezione
@@ -670,7 +640,7 @@ sap.ui.define([
             that.byId("reportSfcInputId").setValue("");
             that.byId("reportOrderInputId").setValue("");
             that.byId("reportQnInputId").setValue("");
-            that.byId("reportPriorityInputId").setValue("");
+            that.byId("phaseInputId").setValue("");
             that.byId("reportStatusInputId").setValue("");
             that.byId("reportCrDateInputId").setValue("");
             that.byId("reportEndDateInputId").setValue("");
@@ -694,7 +664,7 @@ sap.ui.define([
             var sfc = that.byId("reportSfcInputId").getValue();
             var order = that.byId("reportOrderInputId").getValue();
             var qnCode = that.byId("reportQnInputId").getValue();
-            var priority = that.byId("reportPriorityInputId").getValue();
+            var phase = that.byId("phaseInputId").getValue();
             var status = that.byId("reportStatusInputId").getValue();
             var wbe = that.byId("reportWbeInputId").getValue();
 
@@ -704,7 +674,7 @@ sap.ui.define([
                 "sfc": sfc,
                 "order": order,
                 "qnCode": qnCode,
-                "priority": priority,
+                "phase": phase,
                 "startDate": creationDate,
                 "endDate": endDate,
                 "status": status
