@@ -42,6 +42,7 @@
             </Dialog>
 
             <!-- Container principale -->
+            
             <VBox width="100%" height="100%" renderType="Bare" alignItems="Center" justifyContent="SpaceBetween">
                 <!-- Testata principale -->
                 <VBox renderType="Bare" width="90%" height="20%">
