@@ -299,7 +299,7 @@ sap.ui.define([
             var that = this;
             var defects = that.oDefectModel.getProperty("/");
             // Imposto i filtri in base a ciò che è presente in tabella
-            var sfcs = [], wbes = [], orders= [], wcs = [], codeGroups = [], defectTypes = [], qnCodes = [], priorities= [], status = [], phase = [];
+            var sfcs = [], wbes = [], orders= [], wcs = [], codeGroups = [], defectTypes = [], qnCodes = [], priorities= [], status = [], phases = [];
             defects.forEach(item => {
                 if (wbes.filter(elem => item.wbe == elem.WBE).length == 0) wbes.push({WBE: item.wbe})
                 if (sfcs.filter(elem => item.sfc == elem.SFC).length == 0) sfcs.push({SFC: item.sfc})
@@ -310,7 +310,7 @@ sap.ui.define([
                 if (qnCodes.filter(elem => item.qn_code == elem.QN).length == 0) qnCodes.push({QN: item.qn_code})
                 if (priorities.filter(elem => item.priority_description == elem.PRIORITY).length == 0) priorities.push({PRIORITY: item.priority_description})
                 if (status.filter(elem => item.status == elem.STATUS).length == 0) status.push({STATUS: item.status})
-                if (phase.filter(elem => item.phase == elem.phase).length == 0) phase.push({PHASE: item.phase})
+                if (phases.filter(elem => item.phase == elem.PHASE).length == 0) phases.push({PHASE: item.phase})
             });
             that.oFilterModel.setProperty("/WBEs", wbes);
             that.oFilterModel.setProperty("/SFCs", sfcs);
@@ -321,7 +321,7 @@ sap.ui.define([
             that.oFilterModel.setProperty("/QNs", qnCodes);
             that.oFilterModel.setProperty("/PRIORITYs", priorities);
             that.oFilterModel.setProperty("/STATUSs", status);
-            that.oFilterModel.setProperty("/PHASEs", phase);
+            that.oFilterModel.setProperty("/PHASEs", phases);
 			that.oFilterModel.refresh();
         },
 
