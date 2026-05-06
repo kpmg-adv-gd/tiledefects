@@ -228,7 +228,7 @@
                 </HBox>
                 
                 <HBox width="90%" height="10%"  renderType="Bare" alignItems="Center" justifyContent="End">
-                    <Button text="Modify" type="Emphasized" press="onPressModify" class="sapUiSmallMarginEnd" visible="{= ${/tabSelection} === 'reportDefect' &amp;&amp; ${/modify} === 'off' &amp;&amp; ${/notQN} === 'on' }" />
+                    <Button text="Modify" type="Emphasized" press="onPressModify" class="sapUiSmallMarginEnd" visible="{= ${/tabSelection} === 'reportDefect' &amp;&amp; ${/modify} === 'off' &amp;&amp; ${/notQN} === 'on' &amp;&amp; ${/defect/status} === 'OPEN' }" />
                     <Button text="Cancel" type="Emphasized" press="onCancelModify" class="sapUiSmallMarginEnd" />
                     <Button text="Download Info" type="Emphasized" press="onDownloadInfo" class="sapUiSmallMarginEnd"/>
                     <Button text="Save" type="Emphasized" press="onSaveModifyPopup" class="sapUiSmallMarginEnd" visible="{= ${/modify} === 'on' }" />
