@@ -49,17 +49,17 @@
                     <HBox width="100%" height="50%" renderType="Bare" alignItems="Center" justifyContent="Center" class="headerContainerMainPod paddingTopTestataSmall">
                         <HBox renderType="Bare" alignItems="Center" width="35%">
                             <Label text="FASE:" width="auto" class="markingHeaderLabel markingSmallLabel sapUiSmallMarginEnd"/>
-                            <Label text="{/defect/MACROFASE}" width="auto" class="markingSmallLabel"/>
+                            <Label text="{/defect/macrofase}" width="auto" class="markingSmallLabel"/>
                         </HBox>
                         <HBox renderType="Bare" alignItems="Center" width="65%">
                             <Label text="MACRO-ATTIVITA':" width="auto" class="markingHeaderLabel markingSmallLabel sapUiSmallMarginEnd"/>
-                            <Label text="{/defect/MACROATTIVITA}" width="auto" class="markingSmallLabel"/>
+                            <Label text="{/defect/macroattivita}" width="auto" class="markingSmallLabel"/>
                         </HBox>
                     </HBox>
                     <HBox width="100%" height="50%" renderType="Bare" alignItems="Center" justifyContent="Center" class="headerContainerMainPod paddingTopTestata">
                         <HBox renderType="Bare" alignItems="Center" width="100%">
                             <Label text="CHECKLIST:" width="15%" class="markingHeaderLabel markingSmallLabel sapUiSmallMarginEnd"/>
-                            <Label text="{/defect/CHECKLIST}" width="auto" class="infoPopupSmallLabel"/>
+                            <Label text="{/defect/checklist}" width="auto" class="infoPopupSmallLabel"/>
                         </HBox>
                     </HBox>
                 </VBox>

@@ -766,6 +766,7 @@ sap.ui.define([
                         "MATERIAL": element.material,
                         "ASSEMBLY": element.assembly,
                         "QUANTITY": element.numDefect,
+                        "PHASE": element.phase,
                         "CREATE QN": element.create_qn ? "YES" : "NO",
                         "QN CODE": element.qn_code,
                         "TITLE": element.title,
@@ -857,6 +858,11 @@ sap.ui.define([
               {
                 label: "QUANTITY",
                 property: "QUANTITY",
+                type: "string"
+              },
+              {
+                label: "PHASE",
+                property: "PHASE",
                 type: "string"
               },
               {
