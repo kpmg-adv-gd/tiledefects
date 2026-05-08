@@ -180,7 +180,7 @@
                     <!-- Seconda sezione: Report -->
                     <IconTabFilter
                         text="{i18n>defects.section.reportDefects}"
-                        key="reportDefect" visible="{VisibleModel>/visibleManageDefect}"
+                        key="reportDefect"
                         icon="sap-icon://quality-issue">
                         <VBox width="100%" height="100%" renderType="Bare">
                             <!-- Filtri seconda tabella -->
@@ -218,10 +218,10 @@
                                     </Input>
                                 </VBox>
                                 <VBox width="11.1%" height="100%" renderType="Bare" class="filterBox">
-                                    <Label text="{i18n>defects.label.priority}:" width="100%" textAlign="Left" vAlign="Middle" class="kpmgGDSmallLabel paddingLeft" />
-                                    <Input id="reportPriorityInputId" placeholder="Enter Priority" showSuggestion="true" showValueHelp="false" suggestionItems="{FilterModel>/PRIORITYs}" class="GDInputField">
+                                    <Label text="{i18n>defects.label.phase}:" width="100%" textAlign="Left" vAlign="Middle" class="kpmgGDSmallLabel paddingLeft" />
+                                    <Input id="phaseInputId" placeholder="Enter Phase" showSuggestion="true" showValueHelp="false" suggestionItems="{FilterModel>/PHASEs}" class="GDInputField">
                                         <suggestionItems>
-                                            <core:Item key="{FilterModel>PRIORITY}" text="{FilterModel>PRIORITY}" />
+                                            <core:Item key="{FilterModel>PHASE}" text="{FilterModel>PHASE}" />
                                         </suggestionItems>
                                     </Input>
                                 </VBox>
@@ -318,10 +318,10 @@
                                                     <Text text="{DefectModel>title}" />
                                                 </t:template>
                                             </t:Column>
-                                            <t:Column width="8%" sortProperty="priority_description" filterProperty="priority_description">
-                                                <Label text="{i18n>defects.table.priority}"/>
+                                            <t:Column width="8%" sortProperty="phase" filterProperty="phase">
+                                                <Label text="{i18n>defects.table.phase}"/>
                                                 <t:template>
-                                                    <Text text="{DefectModel>priority_description}" />
+                                                    <Text text="{DefectModel>phase}" />
                                                 </t:template>
                                             </t:Column>
                                             <t:Column width="7%" sortProperty="status" filterProperty="status">

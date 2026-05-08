@@ -37,42 +37,39 @@ sap.ui.define([
             sap.ui.getCore().getEventBus().subscribe("defect", "reloadReportDefect", this.onReportGoPress, this);
             sap.ui.getCore().getEventBus().subscribe("defect", "cancelModify", this.cancelModify, this);
 
-            this.oVisibleModel.setProperty("/visibleManageDefect", false)
-            this.getUserPhase();
+            this.checkParamsURL();
 
 		},
+
+        checkParamsURL: function () {
+            var that = this;
+            var sWbe = this.getUrlParameter("WBE");
+            if (sWbe != null && sWbe != "") {
+                // Switch to report tab
+                var oIconTabBar = this.getView().byId("mainTabBar");
+                oIconTabBar.setSelectedKey("reportDefect");
+                this.tabSelection = "reportDefect";
+                // Set report filter values
+                this.byId("reportWbeInputId").setValue(sWbe);
+                that.getSFCbyFilter();
+            }
+        },
+
+        getUrlParameter: function(sParam) {
+            var sSearch = window.location.href;
+            var aParams = sSearch.split("&");
+            for (var i = 0; i < aParams.length; i++) {
+                var aPair = aParams[i].split("=");
+                if (decodeURIComponent(aPair[0]) === sParam) {
+                    return aPair[1] ? decodeURIComponent(aPair[1]) : "";
+                }
+            }
+            return null;
+        },
 
         onAfterRendering: function(){
             var that = this;
             that.getVariance();
-        },
-
-        getUserPhase: function () {
-            var that = this;
-            let plant = that.getInfoModel().getProperty("/plant");
-            
-            let BaseProxyURL = that.getInfoModel().getProperty("/BaseProxyURL");
-            let pathGetMarkingDataApi = "/api/getUserPhase";
-            let url = BaseProxyURL + pathGetMarkingDataApi;
-
-            let params = {
-                plant: plant,
-                userId: that.getInfoModel().getProperty("/user_id")
-            };
-
-            // Callback di successo
-            var successCallback = function (response) {
-                if (response == "Testing") {
-                    that.oVisibleModel.setProperty("/visibleManageDefect", false)
-                }else{
-                    that.oVisibleModel.setProperty("/visibleManageDefect", true)
-                }
-            };
-            // Callback di errore
-            var errorCallback = function (error) {
-                console.log("Chiamata POST fallita: ", error);
-            };
-            CommonCallManager.callProxy("POST", url, params, true, successCallback, errorCallback, that);
         },
 
         // Intercetta cambio di sezione
@@ -169,7 +166,8 @@ sap.ui.define([
                         })
                     });
                     that.oGroupModel.refresh();
-                    that.getDefectsToApprove();
+                    var oIconTabBar = that.getView().byId("mainTabBar");
+                    if (oIconTabBar.getSelectedKey() != "reportDefect") that.getDefectsToApprove();
                 }
             };
             // Callback di errore
@@ -187,7 +185,9 @@ sap.ui.define([
             let pathReasonForVarianceApi = "/db/getReasonsForVariance";
             let url = BaseProxyURL + pathReasonForVarianceApi;
 
-            let params = {};
+            let params = {
+                plant: plant
+            };
 
             // Callback di successo
             var successCallback = function (response) {
@@ -271,13 +271,13 @@ sap.ui.define([
                             defStd = defStd[0];
                             item.wc = defStd.workCenter;
                             item.numDefect = defStd.quantity;
-                            item.varianceDesc = that.oVarianceModel.getProperty("/").filter(variance => variance.cause == item.variance)[0].description;
                             item.groupDesc = that.oGroupModel.getProperty("/").filter(group => group.group == item.group)[0].description;
                             item.codeDesc = that.oGroupModel.getProperty("/").filter(group => group.group == item.group)[0].associateCodes.filter(code => code.code == item.code)[0].description;
                             item.hasAttachment = defStd.fileIds && defStd.fileIds.length > 0;
                             if (item.hasAttachment) {
                                 item.files = defStd.fileIds;
                             }
+                            item.varianceDesc = that.oVarianceModel.getProperty("/").filter(variance => variance.cause == item.variance)[0].description;
                         }
                     } catch (e) {
                         
@@ -301,7 +301,7 @@ sap.ui.define([
             var that = this;
             var defects = that.oDefectModel.getProperty("/");
             // Imposto i filtri in base a ciò che è presente in tabella
-            var sfcs = [], wbes = [], orders= [], wcs = [], codeGroups = [], defectTypes = [], qnCodes = [], priorities= [], status = [];
+            var sfcs = [], wbes = [], orders= [], wcs = [], codeGroups = [], defectTypes = [], qnCodes = [], priorities= [], status = [], phases = [];
             defects.forEach(item => {
                 if (wbes.filter(elem => item.wbe == elem.WBE).length == 0) wbes.push({WBE: item.wbe})
                 if (sfcs.filter(elem => item.sfc == elem.SFC).length == 0) sfcs.push({SFC: item.sfc})
@@ -312,6 +312,7 @@ sap.ui.define([
                 if (qnCodes.filter(elem => item.qn_code == elem.QN).length == 0) qnCodes.push({QN: item.qn_code})
                 if (priorities.filter(elem => item.priority_description == elem.PRIORITY).length == 0) priorities.push({PRIORITY: item.priority_description})
                 if (status.filter(elem => item.status == elem.STATUS).length == 0) status.push({STATUS: item.status})
+                if (phases.filter(elem => item.phase == elem.PHASE).length == 0) phases.push({PHASE: item.phase})
             });
             that.oFilterModel.setProperty("/WBEs", wbes);
             that.oFilterModel.setProperty("/SFCs", sfcs);
@@ -322,6 +323,7 @@ sap.ui.define([
             that.oFilterModel.setProperty("/QNs", qnCodes);
             that.oFilterModel.setProperty("/PRIORITYs", priorities);
             that.oFilterModel.setProperty("/STATUSs", status);
+            that.oFilterModel.setProperty("/PHASEs", phases);
 			that.oFilterModel.refresh();
         },
 
@@ -642,7 +644,7 @@ sap.ui.define([
             that.byId("reportSfcInputId").setValue("");
             that.byId("reportOrderInputId").setValue("");
             that.byId("reportQnInputId").setValue("");
-            that.byId("reportPriorityInputId").setValue("");
+            that.byId("phaseInputId").setValue("");
             that.byId("reportStatusInputId").setValue("");
             that.byId("reportCrDateInputId").setValue("");
             that.byId("reportEndDateInputId").setValue("");
@@ -666,7 +668,7 @@ sap.ui.define([
             var sfc = that.byId("reportSfcInputId").getValue();
             var order = that.byId("reportOrderInputId").getValue();
             var qnCode = that.byId("reportQnInputId").getValue();
-            var priority = that.byId("reportPriorityInputId").getValue();
+            var phase = that.byId("phaseInputId").getValue();
             var status = that.byId("reportStatusInputId").getValue();
             var wbe = that.byId("reportWbeInputId").getValue();
 
@@ -676,7 +678,7 @@ sap.ui.define([
                 "sfc": sfc,
                 "order": order,
                 "qnCode": qnCode,
-                "priority": priority,
+                "phase": phase,
                 "startDate": creationDate,
                 "endDate": endDate,
                 "status": status
@@ -764,6 +766,7 @@ sap.ui.define([
                         "MATERIAL": element.material,
                         "ASSEMBLY": element.assembly,
                         "QUANTITY": element.numDefect,
+                        "PHASE": element.phase,
                         "CREATE QN": element.create_qn ? "YES" : "NO",
                         "QN CODE": element.qn_code,
                         "TITLE": element.title,
@@ -855,6 +858,11 @@ sap.ui.define([
               {
                 label: "QUANTITY",
                 property: "QUANTITY",
+                type: "string"
+              },
+              {
+                label: "PHASE",
+                property: "PHASE",
                 type: "string"
               },
               {
