@@ -333,9 +333,9 @@ sap.ui.define([
             var poNumber = "";
             var prodOrder = "";
             if (defect.type_order == "GRPF") {
-                poNumber = defect.mes_orer;
+                poNumber = defect.mes_order;
             } else if (defect.typeOrder != "ZMGF") {
-                prodOrder = defect.mes_orer;
+                prodOrder = defect.mes_order;
             }
 
             var codingMap = this.ViewDefectModel.getProperty("/responseCoding").filter(item => item.id == defect.coding_id)
