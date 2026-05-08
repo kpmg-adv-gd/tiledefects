@@ -245,6 +245,7 @@ sap.ui.define([
             var that = this;
             var infoModel = that.MainPODcontroller.getInfoModel();
             var defect = that.ViewDefectModel.getProperty("/defect");
+            var user = infoModel.getProperty("/user_id");
 
             if (!that.validate()) {
                 return;
@@ -274,6 +275,9 @@ sap.ui.define([
                 that.MainPODcontroller.showToast("Defect modified.")
                 sap.ui.getCore().getEventBus().publish("defect", "reloadReportDefect", null);
                 that.onClosePopup();
+                if (defect.create_qn) {
+                    that.getUserGroupForQN(user, defect, defect.id);
+                }
             };
 
             // Callback di errore
@@ -281,6 +285,120 @@ sap.ui.define([
                 console.log("Chiamata POST fallita: ", error);
             };
             CommonCallManager.callProxy("POST", url, params, true, successCallback, errorCallback, that);
+        },
+
+        // Gestione approvazione automatica QN
+        getUserGroupForQN: function (user, defect, idDefect) {
+            var that = this;
+            var infoModel = that.MainPODcontroller.getInfoModel();
+            let plant = infoModel.getProperty("/plant");
+
+            let BaseProxyURL = infoModel.getProperty("/BaseProxyURL");
+            let pathGetMarkingDataApi = "/api/getUserGroup";
+            let url = BaseProxyURL + pathGetMarkingDataApi;
+
+            let params = {
+                plant: plant,
+                userId: user
+            };
+
+            // Callback di successo
+            var successCallback = function (response) {
+                if (response == "TL") {
+                    that.onApproveQN(defect, idDefect);
+                }
+            };
+            // Callback di errore
+            var errorCallback = function (error) {
+                console.log("Chiamata POST fallita: ", error);
+            };
+            CommonCallManager.callProxy("POST", url, params, true, successCallback, errorCallback, that);
+        },
+        // Approvazione del QN
+        onApproveQN: function (defect, idDefect) {
+            var that = this;
+            var infoModel = that.MainPODcontroller.getInfoModel();
+
+            let plant = infoModel.getProperty("/plant");
+            var wbeSplit = that.ViewDefectModel.getProperty("/wbe").split(".");
+            var wbs = "";
+            for (var i = 0; i < wbeSplit.length - 1; i++) {
+                if (wbs == "") {
+                    wbs = wbeSplit[i];
+                } else {
+                    wbs = wbs + "." + wbeSplit[i];
+                }
+            }
+
+            var poNumber = "";
+            var prodOrder = "";
+            if (defect.type_order == "GRPF") {
+                poNumber = defect.mes_orer;
+            } else if (defect.typeOrder != "ZMGF") {
+                prodOrder = defect.mes_orer;
+            }
+
+            var codingMap = this.ViewDefectModel.getProperty("/responseCoding").filter(item => item.id == defect.coding_id)
+            let dataForSap = {
+                "notiftype": defect.notification_type,
+                "shortText": defect.title,
+                "priority": "" + defect.priority,
+                "codeGroup": codingMap[0].coding_group,
+                "code": codingMap[0].coding,
+                "material": defect.material,
+                "poNumber": poNumber,
+                "prodOrder": prodOrder,
+                "descript": defect.defect_note,
+                "dCodegrp": defect.group,
+                "dCode": defect.code,
+                "assembly": defect.assembly,
+                "quantDefects": "" + defect.numDefect,
+                "partner": defect.responsible,
+                "textline": defect.description,
+                "wbeAssembly": that.ViewDefectModel.getProperty("/wbe").replaceAll(" ", ""),
+                "zqmGrund": defect.variance,
+                "zqmInit": defect.replaced_in_assembly == 0 ? "YES" : defect.replaced_in_assembly == 1 ? "NO" : "",
+                "pspNr": wbs.replaceAll(" ", ""),
+                "zqmNplnr": "",
+                "zqmEqtyp": "",
+                "attach": []
+            }
+
+            if (defect.attachments.length > 0) {
+                defect.attachments.forEach(element => {
+                    dataForSap.attach.push({
+                        "name": element.FILE_NAME,
+                        "content": element.BASE_64
+                    });
+                });
+            }
+
+            let params = {
+                dataForSap: dataForSap,
+                defectId: idDefect,
+                userId: infoModel.getProperty("/user_id"),
+                plant: plant,
+            };
+            that.sendApproveQNToSAP(params)
+
+        },
+
+        sendApproveQNToSAP: function (params) {
+            var that = this;
+            var infoModel = that.MainPODcontroller.getInfoModel();
+
+            let BaseProxyURL = infoModel.getProperty("/BaseProxyURL");
+            let pathOrderBomApi = "/db/autoApproveDefectQN";
+            let url = BaseProxyURL + pathOrderBomApi;
+
+            // Callback di successo
+            var successCallback = function (response) {
+            };
+            // Callback di errore
+            var errorCallback = function (error) {
+            };
+            CommonCallManager.callProxy("POST", url, params, true, successCallback, errorCallback, that, true, true);
+
         },
 
         getPriority: function () {
